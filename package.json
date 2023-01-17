@@ -1,0 +1,22 @@
+{
+    "name": "ohrm-jsonld-converter",
+    "version": "0.0.1",
+    "description": "A tool to dump an OHRM Postgres database to JSON-LD",
+    "author": "Marco La Rosa",
+    "main": "index.js",
+    "license": "GPL-3.0",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+        "fs-extra": "^11.1.0",
+        "lodash": "^4.17.21",
+        "pg": "^8.8.0",
+        "pg-hstore": "^2.3.4",
+        "ro-crate": "^3.2.0",
+        "sequelize": "^6.26.0",
+        "sequelize-auto": "^0.8.8",
+        "yargs": "^17.6.2"
+    }
+}
