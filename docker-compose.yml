@@ -1,0 +1,44 @@
+version: "3.3"
+
+volumes:
+    ohrm_db:
+        driver: local
+    exporter_node_modules:
+        driver: local
+
+services:
+    db:
+        image: postgres:13-alpine
+        hostname: db
+        tty: true
+        environment:
+            TERM: "xterm-256color"
+            NODE_ENV: "development"
+            POSTGRES_DB: "postgres"
+            POSTGRES_USER: "root"
+            POSTGRES_PASSWORD: ""
+            POSTGRES_HOST_AUTH_METHOD: "trust"
+            PGDATA: /postgresql/data
+        working_dir: /srv/exporter
+        volumes:
+            - ./data:/srv/data
+            - ohrm_db:/postgresql
+        ports:
+           - 5432:5432
+    exporter:
+        image: node:18-bullseye
+        hostname: exporter
+        tty: true
+        environment:
+            TERM: "xterm-256color"
+            NODE_ENV: "development"
+            LOG_LEVEL: "debug"
+            DB_HOST: "db"
+            DB_PORT: "5432"
+            DB_USER: "root"
+            DB_PASSWORD: ""
+        volumes:
+            - exporter_node_modules:/srv/exporter/node_modules:delegated
+            - ./:/srv/exporter
+        working_dir: /srv/exporter
+        command: [ '/bin/bash' ]
