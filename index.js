@@ -5,6 +5,7 @@ import { Sequelize } from "sequelize";
 import initModels from "./models/init-models.js";
 import {
     ArcResource,
+    Contact,
     DObject,
     DObjectVersion,
     Entity,
@@ -34,7 +35,6 @@ main();
 async function main() {
     let sequelize = new Sequelize(
         configuration.databaseConfig.database,
-        // "eoas",
         configuration.databaseConfig.username,
         configuration.databaseConfig.database,
         {
@@ -56,6 +56,7 @@ async function main() {
 
     const resources = [
         { obj: ArcResource, name: "archivalResources" },
+        { obj: Contact, name: "contacts" },
         { obj: DObject, name: "digitalObjects" },
         { obj: DObjectVersion, name: "digitalObjectVersions" },
         { obj: Entity, name: "entities" },
@@ -66,6 +67,7 @@ async function main() {
         { obj: TypeOf, name: "types" },
     ];
 
+    // run all the exporters
     for (let { obj, name } of resources) {
         let resource = new obj();
         let entities = await resource.export({ models });
@@ -73,13 +75,28 @@ async function main() {
         crate.rootDataset[name] = entities.map((e) => ({ "@id": e["@id"] }));
     }
 
+    // iterate over all entities of type Relationship and link the entity
+    //   back to the related entities
     for (let entity of crate.entities()) {
         if (entity["@type"] === "Relationship") {
-            let srcEntity = crate.getEntity(entity.relationshipObject["@id"]);
-            crate.addValues(srcEntity, "relationshipSubject", entity.relationshipSubject, false);
+            try {
+                let srcEntity = crate.getEntity(entity.relationshipObject["@id"]);
+                crate.addValues(
+                    srcEntity,
+                    "relationshipSubject",
+                    entity.relationshipSubject,
+                    false
+                );
+            } catch (error) {
+                console.log(entity.relationshipObject);
+            }
 
-            let tgtEntity = crate.getEntity(entity.relationshipSubject["@id"]);
-            crate.addValues(tgtEntity, "relationshipObject", entity.relationshipObject, false);
+            try {
+                let tgtEntity = crate.getEntity(entity.relationshipSubject["@id"]);
+                crate.addValues(tgtEntity, "relationshipObject", entity.relationshipObject, false);
+            } catch (error) {
+                console.log(entity.relationshipSubject);
+            }
         }
     }
 
@@ -89,7 +106,7 @@ async function main() {
             spaces: 4,
         });
     } else {
-        console.log(crate.rootDataset.toJSON().entities);
+        console.log(crate.toJSON()["@graph"].length);
     }
 
     await sequelize.close();
