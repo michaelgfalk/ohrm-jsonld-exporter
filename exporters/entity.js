@@ -1,5 +1,4 @@
-import { pageSize } from "./config.js";
-
+import { pageSize, mapEntityProperties } from "./config.js";
 export class Entity {
     constructor() {}
 
@@ -9,13 +8,12 @@ export class Entity {
         let total = await models.entity.count();
         while (offset <= total) {
             for (let row of await models.entity.findAll({ limit: pageSize, offset })) {
-                // console.log(row.get());
                 const properties = [
                     "ecountrycode",
                     "eorgcode",
                     "esubname",
                     "elegalno",
-                    "estartdate",
+                    ["estartdate", "dateCreated"],
                     "esdatemod",
                     "estart",
                     "eenddate",
@@ -57,9 +55,7 @@ export class Entity {
                     identifier: row.eid,
                     name: row.ename,
                 };
-                properties.forEach((property) => {
-                    if (row[property]) entity[property] = row[property];
-                });
+                mapEntityProperties(row, entity, properties);
                 if (row.eprepared) {
                     rows.push({
                         "@id": `#${encodeURIComponent(row.eprepared)}`,

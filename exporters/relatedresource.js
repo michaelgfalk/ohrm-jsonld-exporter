@@ -1,4 +1,4 @@
-import { pageSize } from "./config.js";
+import { pageSize, mapEntityProperties } from "./config.js";
 
 export class RelatedResource {
     constructor() {}
@@ -32,9 +32,7 @@ export class RelatedResource {
                     name: `#${encodeURIComponent(row.rid)}-${encodeURIComponent(row.rrid)}`,
                     description: row.rrdescription,
                 };
-                properties.forEach((property) => {
-                    if (row[property]) relatedResource[property] = row[property];
-                });
+                mapEntityProperties(row, relatedResource, properties);
 
                 rows.push({
                     "@id": `#${encodeURIComponent(row.rtype)}`,

@@ -1,4 +1,4 @@
-import { pageSize } from "./config.js";
+import { pageSize, mapEntityProperties } from "./config.js";
 
 export class DObject {
     constructor() {}
@@ -26,7 +26,7 @@ export class DObject {
                     "dorights",
                     "donotes",
                     "dostatus",
-                    "doappenddate",
+                    ["doappenddate", "dateModified"],
                     "dolastmod",
                     "dointerpretation",
                 ];
@@ -42,9 +42,7 @@ export class DObject {
                     name: row.dotitle,
                     description: row.dodescription,
                 };
-                properties.forEach((property) => {
-                    if (row[property]) dobject[property] = row[property];
-                });
+                mapEntityProperties(row, dobject, properties);
                 rows.push({
                     "@id": "#DigitalObject",
                     "@type": "EntityType",

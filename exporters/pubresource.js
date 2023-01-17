@@ -1,4 +1,4 @@
-import { pageSize } from "./config.js";
+import { pageSize, mapEntityProperties } from "./config.js";
 
 export class PubResource {
     constructor() {}
@@ -57,9 +57,7 @@ export class PubResource {
                 if (row.typeofwork) {
                     pubresource.typeofwork = { "@id": `#${encodeURIComponent(row.typeofwork)}` };
                 }
-                properties.forEach((property) => {
-                    if (row[property]) pubresource[property] = row[property];
-                });
+                mapEntityProperties(row, pubresource, properties);
                 rows.push(pubresource);
                 rows.push({
                     "@id": "#PublishedResource",

@@ -1,4 +1,5 @@
 export { ArcResource } from "./arcresource.js";
+export { Contact } from "./contact.js";
 export { DObject } from "./dobject.js";
 export { DObjectVersion } from "./dobjectversion.js";
 export { Entity } from "./entity.js";

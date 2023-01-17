@@ -1,4 +1,4 @@
-import { pageSize } from "./config.js";
+import { pageSize, mapEntityProperties } from "./config.js";
 
 export class DObjectVersion {
     constructor() {}
@@ -19,7 +19,6 @@ export class DObjectVersion {
                     "dovstart",
                     "dovenddate",
                     "dovedatemod",
-
                     "dovend",
                     "dovplace",
                     "dovphysdesc",
@@ -48,9 +47,7 @@ export class DObjectVersion {
                     name: row.dovtitle,
                     description: row.dovdescription,
                 };
-                properties.forEach((property) => {
-                    if (row[property]) dobject[property] = row[property];
-                });
+                mapEntityProperties(row, dobject, properties);
                 rows.push(dobject);
                 rows.push({
                     "@id": "#DigitalObject",

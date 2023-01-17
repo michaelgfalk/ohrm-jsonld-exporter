@@ -1,4 +1,4 @@
-import { pageSize } from "./config.js";
+import { pageSize, mapEntityProperties } from "./config.js";
 
 export class RelatedEntity {
     constructor() {}
@@ -35,9 +35,7 @@ export class RelatedEntity {
                     relationshipObject: { "@id": `#${encodeURIComponent(row.reid)}` },
                     relationshipSubject: { "@id": `#${encodeURIComponent(row.eid)}` },
                 };
-                properties.forEach((property) => {
-                    if (row[property]) relationship[property] = row[property];
-                });
+                mapEntityProperties(row, relationship, properties);
                 rows.push(relationship);
                 rows.push({
                     "@id": `#${encodeURIComponent(row.rerelationship)}`,

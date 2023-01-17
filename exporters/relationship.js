@@ -1,4 +1,4 @@
-import { pageSize } from "./config.js";
+import { pageSize, mapEntityProperties } from "./config.js";
 
 export class Relationship {
     constructor() {}
@@ -18,9 +18,7 @@ export class Relationship {
                     reverse: row.reverse,
                     description: row.notes,
                 };
-                properties.forEach((property) => {
-                    if (row[property]) relationship[property] = row[property];
-                });
+                mapEntityProperties(row, relationship, properties);
 
                 const reverse = {
                     "@id": `#${encodeURIComponent(row.reverse)}`,

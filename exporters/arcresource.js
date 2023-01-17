@@ -1,4 +1,4 @@
-import { pageSize } from "./config.js";
+import { pageSize, mapEntityProperties } from "./config.js";
 
 export class ArcResource {
     constructor() {}
@@ -37,7 +37,7 @@ export class ArcResource {
                     "arstatus",
                 ];
 
-                const pubresource = {
+                const arcresource = {
                     "@id": `#${encodeURIComponent(row.arcid)}`,
                     "@type": "Entity",
                     entityType: { "@id": `#ArchivalResource` },
@@ -45,9 +45,7 @@ export class ArcResource {
                     name: row.artitle,
                     description: row.ardescription,
                 };
-                properties.forEach((property) => {
-                    if (row[property]) pubresource[property] = row[property];
-                });
+                mapEntityProperties(row, arcresource, properties);
                 rows.push({
                     "@id": "#ArchivalResource",
                     "@type": "EntityType",
@@ -59,9 +57,9 @@ export class ArcResource {
                         "@type": "Person",
                         name: row.arprepared,
                     });
-                    pubresource.doprepared = { "@id": `#${encodeURIComponent(row.arprepared)}` };
+                    arcresource.doprepared = { "@id": `#${encodeURIComponent(row.arprepared)}` };
                 }
-                rows.push(pubresource);
+                rows.push(arcresource);
             }
             offset += pageSize;
         }
