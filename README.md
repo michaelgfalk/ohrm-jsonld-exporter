@@ -36,8 +36,7 @@ that volume. Repeat these steps to load more OHRM datasets into this database in
 
 -   Let's say you want to work with the DHRA OHRM:
 
--   define which database you want to work with by setting an environment variables:
-    `export DB_DATABASE='dhra'`
+-
 -   start the database server if required: `docker compose up -d`
 -   in one terminal connect to the DB container and then the database:
     -   `docker exec -it ohrm-jsonld-exporter-db-1 /bin/bash`
@@ -45,7 +44,11 @@ that volume. Repeat these steps to load more OHRM datasets into this database in
 -   in another terminal exec into the linux container that has been started:
     -   `docker exec -it ohrm-jsonld-exporter-exporter-1 /bin/bash`
     -   install dependencies: `npm install`
-    -   export the ohrm data to the data folder: `node . -o ./data/dhra-jsonld`
+    -   define which database you want to work with by setting an environment variables:
+        `export DB_DATABASE='dhra'`
+    -   export the ohrm data to the data folder as one big RO crate file:
+        `node . -o ./data/dhra-jsonld`
+    -   export the ohrm data and print to STDOUT as one big RO crate file: `node .`
 
 ## Repository Layout / Code overview
 

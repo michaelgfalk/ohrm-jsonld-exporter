@@ -106,7 +106,7 @@ async function main() {
             spaces: 4,
         });
     } else {
-        console.log(crate.toJSON()["@graph"].length);
+        console.log(crate.toJSON());
     }
 
     await sequelize.close();
