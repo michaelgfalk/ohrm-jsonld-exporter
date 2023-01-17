@@ -1,0 +1,79 @@
+import { pageSize } from "./config.js";
+
+export class PubResource {
+    constructor() {}
+
+    async export({ models }) {
+        let offset = 0;
+        let rows = [];
+        let total = await models.pubresource.count();
+        while (offset <= total) {
+            for (let row of await models.pubresource.findAll({ limit: pageSize, offset })) {
+                // console.log(row.get());
+                const properties = [
+                    "online",
+                    "author",
+                    "x_year",
+                    "secondaryauthor",
+                    "secondarytitle",
+                    "placepublished",
+                    "publisher",
+                    "volume",
+                    "numberofvolumes",
+                    "number",
+                    "pagenos",
+                    "edition",
+                    "x_date",
+                    "isbn_issn",
+                    "source",
+                    "abstract",
+                    "notes",
+                    "classification",
+                    "url",
+                    "urltype",
+                    "urldate",
+                    "format",
+                    "x_language",
+                    "contains",
+                    "pubappenddate",
+                    "publastmodd",
+                    "descriptionofwork",
+                    "prepared",
+                    "catid",
+                    "processing",
+                    "status",
+                ];
+
+                const pubresource = {
+                    "@id": `#${encodeURIComponent(row.pubid)}`,
+                    "@type": "Entity",
+                    entityType: [
+                        { "@id": "#PublishedResource" },
+                        { "@id": `#${encodeURIComponent(row.type)}` },
+                    ],
+                    identifier: row.pubid,
+                    name: row.title,
+                };
+                if (row.typeofwork) {
+                    pubresource.typeofwork = { "@id": `#${encodeURIComponent(row.typeofwork)}` };
+                }
+                properties.forEach((property) => {
+                    if (row[property]) pubresource[property] = row[property];
+                });
+                rows.push(pubresource);
+                rows.push({
+                    "@id": "#PublishedResource",
+                    "@type": "EntityType",
+                    name: "Published Resource",
+                });
+                rows.push({
+                    "@id": `#${encodeURIComponent(row.type)}`,
+                    "@type": "EntityType",
+                    name: row.type,
+                });
+            }
+            offset += pageSize;
+        }
+        return rows;
+    }
+}
