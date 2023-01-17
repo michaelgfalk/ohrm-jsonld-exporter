@@ -5,13 +5,14 @@
   - [Get the data](#get-the-data)
   - [Start the postgres container and load an OHRM DB dump](#start-the-postgres-container-and-load-an-ohrm-db-dump)
   - [Working with an OHRM dataset](#working-with-an-ohrm-dataset)
+  - [Repository Layout / Code overview](#repository-layout--code-overview)
 
 # Developing the code
 
 ## Get the data
 
 Before you get started you will need the data from someone who has it. That is, you will need to get
-hold of the Postgres db dump of an OHRM or OHRMS. Unpack those files in the folder `./data` which is
+hold of the Postgres db dump of an OHRM or OHRMs. Unpack those files in the folder `./data` which is
 mounted into the container `/srv/data`.
 
 ## Start the postgres container and load an OHRM DB dump
@@ -39,9 +40,37 @@ that volume. Repeat these steps to load more OHRM datasets into this database in
     `export DB_DATABASE='dhra'`
 -   start the database server if required: `docker compose up -d`
 -   in one terminal connect to the DB container and then the database:
-    -   `docker exec -t ohrm-jsonld-exporter-db-1 /bin/bash`
+    -   `docker exec -it ohrm-jsonld-exporter-db-1 /bin/bash`
     -   `psql dhra`
 -   in another terminal exec into the linux container that has been started:
     -   `docker exec -it ohrm-jsonld-exporter-exporter-1 /bin/bash`
     -   install dependencies: `npm install`
     -   export the ohrm data to the data folder: `node . -o ./data/dhra-jsonld`
+
+## Repository Layout / Code overview
+
+-   All database tables have been reflected in Sequelize models in the `./models` folder.
+-   All exporters - one per table - are found in the `./exporters` folder. The structure of these is
+    the same.
+    -   All exporters have a single class named as the table with a single method `export` that
+        iterates over the rows of the table and writes out a JSON-LD snippet with the data. Those
+        snippets are then returned back to the main module to insert into the ro crate.
+    -   In the export method of any given exporter you will see an array or properties with odd
+        looking names. These correspond directly to the table column names. If you want to output a
+        column with a new name then change the entry to an array. e.g
+
+```
+for (let row of await models.entity.findAll({ limit: pageSize, offset })) {
+    const properties = [
+        ...
+        "elegalno",
+        ["estartdate", 'dateCreated' ],
+        "esdatemod",
+        ...
+```
+
+In this example the data in the `estartdate` column will be written out to a field called
+`dateCreated` in the JSON-LD snippet.
+
+-   The exporters are then wired up into the file `./index.js` which first runs all of the exporters
+    and then goes through linking the relationship entities to the respective targets.
