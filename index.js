@@ -54,6 +54,8 @@ async function main() {
 
     const crate = new ROCrate();
 
+    // the name property is where those entities will be attached to the root dataset
+    //   so for example: ArchivalResources will be at crate.rootDataset.archivalResource
     const resources = [
         { obj: ArcResource, name: "archivalResources" },
         { obj: Contact, name: "contacts" },
@@ -102,9 +104,7 @@ async function main() {
 
     if (argv.outputPath) {
         await ensureDir(argv.outputPath);
-        await writeJSON(path.join(argv.outputPath, "ro-crate-metadata.json"), crate, {
-            spaces: 4,
-        });
+        await writeJSON(path.join(argv.outputPath, "ro-crate-metadata.json"), crate);
     } else {
         console.log(crate.toJSON());
     }
