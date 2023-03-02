@@ -104,9 +104,9 @@ async function main() {
 
     if (argv.outputPath) {
         await ensureDir(argv.outputPath);
-        await writeJSON(path.join(argv.outputPath, "ro-crate-metadata.json"), crate);
+        await writeJSON(path.join(argv.outputPath, "ro-crate-metadata.json"), crate, { spaces: 4 });
     } else {
-        console.log(crate.toJSON());
+        console.log(JSON.stringify(crate.toJSON(), null, 2));
     }
 
     await sequelize.close();
