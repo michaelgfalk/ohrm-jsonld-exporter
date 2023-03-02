@@ -33,26 +33,12 @@ export class DObject {
 
                 const dobject = {
                     "@id": `#${encodeURIComponent(row.doid)}`,
-                    "@type": "Entity",
-                    entityType: [
-                        { "@id": "#DigitalObject" },
-                        { "@id": `#${encodeURIComponent(row.dotype)}` },
-                    ],
+                    "@type": ["DigitalObject", row.dotype],
                     identifier: row.doid,
                     name: row.dotitle,
                     description: row.dodescription,
                 };
                 mapEntityProperties(row, dobject, properties);
-                rows.push({
-                    "@id": "#DigitalObject",
-                    "@type": "EntityType",
-                    name: "DigitalObject",
-                });
-                rows.push({
-                    "@id": `#${encodeURIComponent(row.dotype)}`,
-                    "@type": "EntityType",
-                    name: row.dotype,
-                });
                 if (row.doprepared) {
                     rows.push({
                         "@id": `#${encodeURIComponent(row.doprepared)}`,

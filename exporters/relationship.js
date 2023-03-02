@@ -13,7 +13,7 @@ export class Relationship {
                 const properties = ["reltype", "relationshiplabel", "relorder", "relstatus"];
                 const relationship = {
                     "@id": `#${encodeURIComponent(row.relationship)}`,
-                    "@type": "RelationshipType",
+                    "@type": ["RelationshipType", row.relationship],
                     name: row.relationship,
                     reverse: row.reverse,
                     description: row.notes,
@@ -22,7 +22,7 @@ export class Relationship {
 
                 const reverse = {
                     "@id": `#${encodeURIComponent(row.reverse)}`,
-                    "@type": "RelationshipType",
+                    "@type": ["RelationshipType", row.reverse],
                     name: row.reverse,
                     reverse: row.relationship,
                     description: row.notes,

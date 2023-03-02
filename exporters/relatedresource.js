@@ -26,19 +26,12 @@ export class RelatedResource {
                 ];
                 const relatedResource = {
                     "@id": `#${encodeURIComponent(row.rid)}-${encodeURIComponent(row.rrid)}`,
-                    "@type": "Relationship",
-                    relationshipType: { "@id": `#${encodeURIComponent(row.rtype)}` },
+                    "@type": ["Relationship", row.rtype],
                     identifier: `${row.eid}-${row.reid}`,
                     name: `#${encodeURIComponent(row.rid)}-${encodeURIComponent(row.rrid)}`,
                     description: row.rrdescription,
                 };
                 mapEntityProperties(row, relatedResource, properties);
-
-                rows.push({
-                    "@id": `#${encodeURIComponent(row.rtype)}`,
-                    "@type": "RelationshipType",
-                    name: row.type,
-                });
             }
             offset += pageSize;
         }

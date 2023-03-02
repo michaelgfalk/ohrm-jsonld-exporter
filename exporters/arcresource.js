@@ -39,8 +39,7 @@ export class ArcResource {
 
                 const arcresource = {
                     "@id": `#${encodeURIComponent(row.arcid)}`,
-                    "@type": "Entity",
-                    entityType: { "@id": `#ArchivalResource` },
+                    "@type": ["ArchivalResource"],
                     identifier: row.arcid,
                     name: row.artitle,
                     description: row.ardescription,

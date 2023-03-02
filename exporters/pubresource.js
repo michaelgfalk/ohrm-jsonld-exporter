@@ -46,11 +46,7 @@ export class PubResource {
 
                 const pubresource = {
                     "@id": `#${encodeURIComponent(row.pubid)}`,
-                    "@type": "Entity",
-                    entityType: [
-                        { "@id": "#PublishedResource" },
-                        { "@id": `#${encodeURIComponent(row.type)}` },
-                    ],
+                    "@type": ["PublishedResource", row.type],
                     identifier: row.pubid,
                     name: row.title,
                 };
@@ -59,16 +55,6 @@ export class PubResource {
                 }
                 mapEntityProperties(row, pubresource, properties);
                 rows.push(pubresource);
-                rows.push({
-                    "@id": "#PublishedResource",
-                    "@type": "EntityType",
-                    name: "Published Resource",
-                });
-                rows.push({
-                    "@id": `#${encodeURIComponent(row.type)}`,
-                    "@type": "EntityType",
-                    name: row.type,
-                });
             }
             offset += pageSize;
         }

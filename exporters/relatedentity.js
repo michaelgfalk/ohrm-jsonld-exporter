@@ -27,8 +27,7 @@ export class RelatedEntity {
                 ];
                 const relationship = {
                     "@id": `#${encodeURIComponent(row.eid)}-${encodeURIComponent(row.reid)}`,
-                    "@type": "Relationship",
-                    relationshipType: { "@id": `#${encodeURIComponent(row.rerelationship)}` },
+                    "@type": ["Relationship", row.rerelationship],
                     identifier: `${row.eid}-${row.reid}`,
                     name: row.rerelationship,
                     description: row.redescription,
@@ -37,11 +36,6 @@ export class RelatedEntity {
                 };
                 mapEntityProperties(row, relationship, properties);
                 rows.push(relationship);
-                rows.push({
-                    "@id": `#${encodeURIComponent(row.rerelationship)}`,
-                    "@type": "RelationshipType",
-                    name: row.rerelationship,
-                });
             }
             offset += pageSize;
         }

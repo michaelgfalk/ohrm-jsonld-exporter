@@ -19,18 +19,11 @@ export class Entity {
                     "eenddate",
                     "eend",
                     "edatequal",
-                    "ebthplace",
-                    "ebthstate",
-                    "ebthcountry",
-                    "dthplace",
-                    "edthstate",
-                    "edthcountry",
                     "elocation",
                     "elegalstatus",
-                    "enationality",
                     "efunction",
-                    "esumnote",
-                    "efullnote",
+                    ["esumnote", "summaryNote"],
+                    ["efullnote", "fullNote"],
                     "egender",
                     "ereference",
                     "enote",
@@ -48,26 +41,89 @@ export class Entity {
                     "x_efunction",
                 ];
 
+                let type = row.etype.split("-").map((v) => v.trim());
                 const entity = {
                     "@id": `#${encodeURIComponent(row.eid)}`,
-                    "@type": "Entity",
-                    entityType: { "@id": `#${encodeURIComponent(row.etype)}` },
+                    "@type": type,
                     identifier: row.eid,
                     name: row.ename,
                 };
                 mapEntityProperties(row, entity, properties);
-                if (row.eprepared) {
-                    rows.push({
-                        "@id": `#${encodeURIComponent(row.eprepared)}`,
-                        "@type": "Person",
-                        name: row.eprepared,
-                    });
-                    entity.eprepared = { "@id": `#${encodeURIComponent(row.eprepared)}` };
-                }
+
+                // extract eprepared as a person entity
+                extractEntity({
+                    rows,
+                    entity,
+                    type: "Person",
+                    value: row.eprepared,
+                    property: "preparedBy",
+                });
+                extractEntity({
+                    rows,
+                    entity,
+                    type: "Place",
+                    value: row.ebthplace,
+                    property: "birthPlace",
+                });
+                extractEntity({
+                    rows,
+                    entity,
+                    type: "State",
+                    value: row.ebthstate,
+                    property: "birthState",
+                });
+                extractEntity({
+                    rows,
+                    entity,
+                    type: "Country",
+                    value: row.ebthcountry,
+                    property: "birthCountry",
+                });
+                extractEntity({
+                    rows,
+                    entity,
+                    type: "Place",
+                    value: row.edthplace,
+                    property: "deathPlace",
+                });
+                extractEntity({
+                    rows,
+                    entity,
+                    type: "State",
+                    value: row.edthstate,
+                    property: "deathState",
+                });
+                extractEntity({
+                    rows,
+                    entity,
+                    type: "Country",
+                    value: row.edthcountry,
+                    property: "deathCountry",
+                });
+                extractEntity({
+                    rows,
+                    entity,
+                    type: "Nationality",
+                    value: row.enationality,
+                    property: "nationality",
+                });
+
+                // push the entity definition into the graph
                 rows.push(entity);
             }
             offset += pageSize;
         }
         return rows;
     }
+}
+
+function extractEntity({ rows, entity, type, value, property }) {
+    if (!value) return;
+    let relatedEntity = {
+        "@id": `#${encodeURIComponent(value)}`,
+        "@type": type,
+        name: value,
+    };
+    rows.push(relatedEntity);
+    entity[property] = `#${encodeURIComponent(value)}`;
 }

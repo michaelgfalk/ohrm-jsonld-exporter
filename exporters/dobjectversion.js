@@ -38,27 +38,13 @@ export class DObjectVersion {
 
                 const dobject = {
                     "@id": encodeURI(row.dov),
-                    "@type": "File",
-                    entityType: [
-                        { "@id": "#DigitalObject" },
-                        { "@id": `#${encodeURIComponent(row.dovtype)}` },
-                    ],
+                    "@type": ["File", "DigitalObject", row.dovtype],
                     dobjectIdentifier: row.doid,
                     name: row.dovtitle,
                     description: row.dovdescription,
                 };
                 mapEntityProperties(row, dobject, properties);
                 rows.push(dobject);
-                rows.push({
-                    "@id": "#DigitalObject",
-                    "@type": "EntityType",
-                    name: "Digital Object",
-                });
-                rows.push({
-                    "@id": `#${encodeURIComponent(row.dovtype)}`,
-                    "@type": "EntityType",
-                    name: row.dovtype,
-                });
             }
             offset += pageSize;
         }
