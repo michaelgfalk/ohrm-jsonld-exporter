@@ -125,5 +125,5 @@ function extractEntity({ rows, entity, type, value, property }) {
         name: value,
     };
     rows.push(relatedEntity);
-    entity[property] = `#${encodeURIComponent(value)}`;
+    entity[property] = { "@id": `#${encodeURIComponent(value)}` };
 }
