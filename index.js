@@ -80,7 +80,7 @@ async function main() {
     // iterate over all entities of type Relationship and link the entity
     //   back to the related entities
     for (let entity of crate.entities()) {
-        if (entity["@type"] === "Relationship") {
+        if (entity["@type"].includes("Relationship")) {
             try {
                 let srcEntity = crate.getEntity(entity.relationshipObject["@id"]);
                 crate.addValues(
@@ -90,14 +90,14 @@ async function main() {
                     false
                 );
             } catch (error) {
-                console.log(entity.relationshipObject);
+                console.log(`Can't find relationshipObject: ${entity.relationshipObject["@id"]}`);
             }
 
             try {
                 let tgtEntity = crate.getEntity(entity.relationshipSubject["@id"]);
                 crate.addValues(tgtEntity, "relationshipObject", entity.relationshipObject, false);
             } catch (error) {
-                console.log(entity.relationshipSubject);
+                console.log(`Can't find relationshipSubject: ${entity.relationshipSubject["@id"]}`);
             }
         }
     }
