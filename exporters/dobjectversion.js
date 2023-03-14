@@ -12,6 +12,7 @@ export class DObjectVersion {
             for (let row of await models.dobjectversion.findAll({ limit: pageSize, offset })) {
                 // console.log(row.get());
                 const properties = [
+                    ["dovformat", "format"],
                     ["dovdefault", "primaryVersion"],
                     "dovattributes",
                     ["dovstartdate", "startDate"],

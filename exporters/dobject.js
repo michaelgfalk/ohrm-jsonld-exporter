@@ -17,7 +17,7 @@ export class DObject {
                     ["dostart", "startDateISOString"],
                     ["doenddate", "endDate"],
                     ["doedatemod", "endDateModifier"],
-                    ["doend", "endDateISOStrin"],
+                    ["doend", "endDateISOString"],
                     ["dophysdesc", "physicalDescription"],
                     ["docreator", "resourceCreator"],
                     ["docontrol", "controlCode"],
@@ -30,15 +30,21 @@ export class DObject {
                     "dointerpretation",
                 ];
 
+                let versions = await models.dobjectversion.findAll({ where: { doid: row.doid } });
+                versions = versions.map((entity) => {
+                    return { "@id": encodeURI(entity.dov) };
+                });
+
                 const dobject = {
                     "@id": `#${encodeURIComponent(row.doid)}`,
                     "@type": ["DigitalObject", row.dotype],
                     identifier: row.doid,
                     name: row.dotitle,
                     description: row.dodescription,
-                    linkedArchivalResource: { "@id": row.arcid },
-                    linkedPublishedResource: { "@id": row.pubid },
+                    versions,
                 };
+                if (row.arcid) dobject.linkedArchivalResource = { "@id": row.arcid };
+                if (row.pubid) dobject.linkedPublishedResource = { "@id": row.pubid };
                 mapEntityProperties(row, dobject, properties);
                 if (row.doprepared) {
                     rows.push({
