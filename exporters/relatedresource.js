@@ -29,6 +29,8 @@ export class RelatedResource {
                     identifier: `${row.eid}-${row.reid}`,
                     name: `#${encodeURIComponent(row.rid)}-${encodeURIComponent(row.rrid)}`,
                     description: row.rrdescription,
+                    source: { "@id": `#${encodeURIComponent(row.rid)}` },
+                    target: { "@id": `#${encodeURIComponent(row.rrid)}` },
                 };
                 mapEntityProperties(row, relatedResource, properties);
             }

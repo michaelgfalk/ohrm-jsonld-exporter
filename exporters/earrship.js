@@ -30,8 +30,8 @@ export class EntityArchivalRelationship {
                     "@type": ["Relationship", row.relationship],
                     identifier: `${row.arcid}-${row.eid}`,
                     description: row.description,
-                    relationshipObject: { "@id": `#${encodeURIComponent(row.arcid)}` },
-                    relationshipSubject: { "@id": `#${encodeURIComponent(row.eid)}` },
+                    source: { "@id": `#${encodeURIComponent(row.arcid)}` },
+                    target: { "@id": `#${encodeURIComponent(row.eid)}` },
                 };
                 if (row.earprepared) {
                     rows.push({

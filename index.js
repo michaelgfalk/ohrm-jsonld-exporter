@@ -84,22 +84,17 @@ async function main() {
     for (let entity of crate.entities()) {
         if (entity["@type"].includes("Relationship")) {
             try {
-                let srcEntity = crate.getEntity(entity.relationshipObject["@id"]);
-                crate.addValues(
-                    srcEntity,
-                    "relationshipSubject",
-                    entity.relationshipSubject,
-                    false
-                );
+                let srcEntity = crate.getEntity(entity.source["@id"]);
+                crate.addValues(srcEntity, "target", { "@id": entity["@id"] }, false);
             } catch (error) {
-                console.log(`Can't find relationshipObject: ${entity.relationshipObject["@id"]}`);
+                console.log(`Can't find source: ${entity.source["@id"]}`);
             }
 
             try {
-                let tgtEntity = crate.getEntity(entity.relationshipSubject["@id"]);
-                crate.addValues(tgtEntity, "relationshipObject", entity.relationshipObject, false);
+                let tgtEntity = crate.getEntity(entity.target["@id"]);
+                crate.addValues(tgtEntity, "source", { "@id": entity["@id"] }, false);
             } catch (error) {
-                console.log(`Can't find relationshipSubject: ${entity.relationshipSubject["@id"]}`);
+                console.log(`Can't find target: ${entity.target["@id"]}`);
             }
         }
     }

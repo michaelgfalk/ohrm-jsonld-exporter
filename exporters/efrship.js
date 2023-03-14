@@ -31,8 +31,8 @@ export class EntityFunctionRelationship {
                     "@type": ["Relationship"],
                     identifier: `${row.eid}-${row.fid}`,
                     description: row.description,
-                    relationshipObject: { "@id": `#${encodeURIComponent(row.eid)}` },
-                    relationshipSubject: { "@id": `#${encodeURIComponent(row.fid)}` },
+                    source: { "@id": `#${encodeURIComponent(row.eid)}` },
+                    target: { "@id": `#${encodeURIComponent(row.fid)}` },
                 };
                 if (row.efprepared) {
                     rows.push({

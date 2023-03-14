@@ -30,8 +30,8 @@ export class EntityDobjectRelationship {
                     "@type": ["Relationship", row.relationship],
                     identifier: `${row.doid}-${row.eid}`,
                     description: row.description,
-                    relationshipObject: { "@id": `#${encodeURIComponent(row.doid)}` },
-                    relationshipSubject: { "@id": `#${encodeURIComponent(row.eid)}` },
+                    source: { "@id": `#${encodeURIComponent(row.doid)}` },
+                    target: { "@id": `#${encodeURIComponent(row.eid)}` },
                 };
                 if (row.edoprepared) {
                     rows.push({

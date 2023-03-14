@@ -37,11 +37,11 @@ export class DObjectVersion {
                     "@id": encodeURI(row.dov),
                     "@type": ["File", "DigitalObject", row.dovtype],
                     dobjectIdentifier: row.doid,
-                    name: row.dovtitle,
+                    name: row.dovtitle ?? row.dov,
                     description: row.dovdescription,
-                    linkedArchivalResource: { "@id": row.arcid },
-                    linkedPublishedResource: { "@id": row.pubid },
                 };
+                if (row.arcid) dobject.linkedArchivalResource = { "@id": row.arcid };
+                if (row.pubid) dobject.linkedPublishedResource = { "@id": row.pubid };
                 mapEntityProperties(row, dobject, properties);
                 extractEntity({
                     rows,

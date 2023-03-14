@@ -30,8 +30,8 @@ export class RelatedEntity {
                     identifier: `${row.eid}-${row.reid}`,
                     name: row.rerelationship,
                     description: row.redescription,
-                    relationshipObject: { "@id": `#${encodeURIComponent(row.reid)}` },
-                    relationshipSubject: { "@id": `#${encodeURIComponent(row.eid)}` },
+                    source: { "@id": `#${encodeURIComponent(row.reid)}` },
+                    target: { "@id": `#${encodeURIComponent(row.eid)}` },
                 };
                 if (row.reprepared) {
                     rows.push({
