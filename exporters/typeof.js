@@ -4,12 +4,12 @@ export class TypeOf {
     constructor() {}
 
     async export({ models }) {
-        let rows = await this.exportArFormats({ model: models.typeofarformats });
-        rows = [...rows, ...(await this.exportContent({ model: models.typeofcontent }))];
-        rows = [...rows, ...(await this.exportEntities({ model: models.typeofentity }))];
-        rows = [...rows, ...(await this.exportFormats({ model: models.typeofformat }))];
-        rows = [...rows, ...(await this.exportResources({ model: models.typeofresource }))];
-        rows = [...rows, ...(await this.exportWorks({ model: models.typeofwork }))];
+        // let rows = await this.exportArFormats({ model: models.typeofarformats });
+        // rows = [...rows, ...(await this.exportContent({ model: models.typeofcontent }))];
+        // rows = [...rows, ...(await this.exportEntities({ model: models.typeofentity }))];
+        // rows = [...rows, ...(await this.exportFormats({ model: models.typeofformat }))];
+        // rows = [...rows, ...(await this.exportResources({ model: models.typeofresource }))];
+        // rows = [...rows, ...(await this.exportWorks({ model: models.typeofwork }))];
         return rows;
     }
     async exportArFormats({ model }) {

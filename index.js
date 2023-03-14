@@ -5,15 +5,16 @@ import { Sequelize } from "sequelize";
 import initModels from "./models/init-models.js";
 import {
     ArcResource,
-    Contact,
     DObject,
     DObjectVersion,
+    EntityArchivalRelationship,
+    EntityDobjectRelationship,
+    EntityFunctionRelationship,
     Entity,
+    Function,
     PubResource,
     RelatedEntity,
     RelatedResource,
-    Relationship,
-    TypeOf,
 } from "./exporters/index.js";
 
 import lodashPkg from "lodash";
@@ -58,15 +59,16 @@ async function main() {
     //   so for example: ArchivalResources will be at crate.rootDataset.archivalResource
     const resources = [
         { obj: ArcResource, name: "archivalResources" },
-        { obj: Contact, name: "contacts" },
         { obj: DObject, name: "digitalObjects" },
         { obj: DObjectVersion, name: "digitalObjectVersions" },
+        { obj: EntityArchivalRelationship, name: "entityArchivalRelationships" },
+        { obj: EntityDobjectRelationship, name: "entityDobjectRelationships" },
+        { obj: EntityFunctionRelationship, name: "entityFunctionRelationships" },
         { obj: Entity, name: "entities" },
+        { obj: Function, name: "entityFunction" },
         { obj: PubResource, name: "publishedResources" },
         { obj: RelatedEntity, name: "entityRelationships" },
         { obj: RelatedResource, name: "resourceRelationships" },
-        { obj: Relationship, name: "relationships" },
-        { obj: TypeOf, name: "types" },
     ];
 
     // run all the exporters

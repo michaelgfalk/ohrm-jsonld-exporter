@@ -1,4 +1,5 @@
 import { pageSize, mapEntityProperties } from "./config.js";
+import { extractEntity } from "./common.js";
 
 export class DObjectVersion {
     constructor() {}
@@ -11,29 +12,25 @@ export class DObjectVersion {
             for (let row of await models.dobjectversion.findAll({ limit: pageSize, offset })) {
                 // console.log(row.get());
                 const properties = [
-                    "dovdefault",
-                    "dov",
+                    ["dovdefault", "primaryVersion"],
                     "dovattributes",
-                    "dovstartdate",
-                    "dovsdatemod",
-                    "dovstart",
-                    "dovenddate",
-                    "dovedatemod",
-                    "dovend",
-                    "dovplace",
-                    "dovphysdesc",
-                    "dovcreator",
-                    "dovcontrol",
-                    "arcid",
-                    "pubid",
-                    "dovreference",
-                    "dovnotes",
-                    "dovstatus",
-                    "dovappendate",
-                    "dovlastmodd",
+                    ["dovstartdate", "startDate"],
+                    ["dovsdatemod", "startDateModifier"],
+                    ["dovstart", "startDateISOString"],
+                    ["dovenddate", "endDate"],
+                    ["dovedatemod", "endDateModifier"],
+                    ["dovend", "endDateISOString"],
+                    ["dovphysdesc", "physicalDescription"],
+                    ["dovcreator", "resourceCreator"],
+                    ["dovcontrol", "controlCode"],
+                    ["dovreference", "note"],
+                    ["dovnotes", "processingNotes"],
+                    ["dovstatus", "outputStatus"],
+                    ["dovappendate", "recordAppendDate"],
+                    ["dovlastmodd", "recordLastModified"],
                     "dovimagedisplay",
                     "dovorder",
-                    "dovportrait",
+                    ["dovportrait", "imageOrientation"],
                 ];
 
                 const dobject = {
@@ -42,8 +39,17 @@ export class DObjectVersion {
                     dobjectIdentifier: row.doid,
                     name: row.dovtitle,
                     description: row.dovdescription,
+                    linkedArchivalResource: { "@id": row.arcid },
+                    linkedPublishedResource: { "@id": row.pubid },
                 };
                 mapEntityProperties(row, dobject, properties);
+                extractEntity({
+                    rows,
+                    entity: dobject,
+                    type: "Place",
+                    value: row.doplace,
+                    property: "place",
+                });
                 rows.push(dobject);
             }
             offset += pageSize;

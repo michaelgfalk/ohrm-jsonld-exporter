@@ -11,37 +11,37 @@ export class ArcResource {
             for (let row of await models.arcresource.findAll({ limit: pageSize, offset })) {
                 // console.log(row.get());
                 const properties = [
-                    "repid",
-                    "arrepref",
-                    "arrepreflink",
-                    "arlanguage",
-                    "arstatedate",
-                    "ardatemod",
-                    "arstart",
-                    "arenddate",
-                    "aredatemod",
-                    "arend",
-                    "arquantityl",
-                    "arquantityn",
-                    "arquantityt",
-                    "arformats",
-                    "araccess",
+                    ["repid", "repositoryId"],
+                    ["arrepref", "archiveIdentifier"],
+                    ["arrepreflink", "archiveLink"],
+                    ["arlanguage", "resourceLanguage"],
+                    ["arstatedate", "startDate"],
+                    ["arsdatemod", "dateModifier"],
+                    ["arstart", "startDateISOString"],
+                    ["arenddate", "endDate"],
+                    ["aredatemod", "endDateModifier"],
+                    ["arend", "endDateISOString"],
+                    ["arquantityl", "linearMetres"],
+                    ["arquantityn", "numberOfItems"],
+                    ["arquantityt", "typeOfItems"],
+                    ["arformats", "formatOfItems"],
+                    ["araccess", "accessConditions"],
                     "arotherfa",
-                    "arref",
-                    "arappendate",
-                    "arlastmodd",
-                    "arcreator",
-                    "arlevel",
-                    "arsubtitle",
-                    "arprocessing",
-                    "arstatus",
+                    ["arref", "organisationalIdentifier"],
+                    ["arappendate", "recordCreationDate"],
+                    ["arlastmodd", "recordLastModifiedDate"],
+                    ["arcreator", "resourceCreator"],
+                    ["arlevel", "levelOfCollection"],
+                    ["arprocessing", "processingNote"],
+                    ["arstatus", "outputStatus"],
                 ];
 
                 const arcresource = {
                     "@id": `#${encodeURIComponent(row.arcid)}`,
-                    "@type": ["ArchivalResource"],
+                    "@type": ["ArchiveResource", "HeritageResource"],
                     identifier: row.arcid,
                     name: row.artitle,
+                    subTitle: row.arsubtitle,
                     description: row.ardescription,
                 };
                 mapEntityProperties(row, arcresource, properties);
@@ -56,7 +56,7 @@ export class ArcResource {
                         "@type": "Person",
                         name: row.arprepared,
                     });
-                    arcresource.doprepared = { "@id": `#${encodeURIComponent(row.arprepared)}` };
+                    arcresource.preparedBy = { "@id": `#${encodeURIComponent(row.arprepared)}` };
                 }
                 rows.push(arcresource);
             }

@@ -1,4 +1,5 @@
 import { pageSize, mapEntityProperties } from "./config.js";
+import { extractEntity } from "./common.js";
 
 export class PubResource {
     constructor() {}
@@ -13,47 +14,60 @@ export class PubResource {
                 const properties = [
                     "online",
                     "author",
-                    "x_year",
-                    "secondaryauthor",
-                    "secondarytitle",
-                    "placepublished",
+                    ["x_year", "publicationYear"],
+                    ["secondaryauthor", "secondaryAuthor"],
+                    ["secondarytitle", "secondaryTitle"],
                     "publisher",
                     "volume",
-                    "numberofvolumes",
+                    ["numberofvolumes", "numberOfVolumes"],
                     "number",
-                    "pagenos",
+                    ["pagenos", "numberOfPages"],
                     "edition",
-                    "x_date",
+                    ["x_date", "publicationDate"],
                     "isbn_issn",
-                    "source",
+                    ["source", "referenceSource"],
                     "abstract",
                     "notes",
                     "classification",
                     "url",
-                    "urltype",
-                    "urldate",
+                    ["urltype", "urlType"],
+                    ["urldate", "dateAccessed"],
                     "format",
-                    "x_language",
+                    ["x_language", "contentLanguage"],
                     "contains",
-                    "pubappenddate",
-                    "publastmodd",
-                    "descriptionofwork",
-                    "prepared",
-                    "catid",
-                    "processing",
-                    "status",
+                    ["pubappenddate", "recordAppendDate"],
+                    ["publastmodd", "recordLastModified"],
+                    ["descriptionofwork", "descriptionOfWork"],
+                    ["catid", "catalogueId"],
+                    ["processing", "processingNotes"],
+                    ["status", "outputStatus"],
                 ];
 
                 const pubresource = {
                     "@id": `#${encodeURIComponent(row.pubid)}`,
-                    "@type": ["PublishedResource", row.type],
+                    "@type": ["PublishedResource", row.type, row.typeofwork],
                     identifier: row.pubid,
                     name: row.title,
                 };
-                if (row.typeofwork) {
-                    pubresource.typeofwork = { "@id": `#${encodeURIComponent(row.typeofwork)}` };
+                // if (row.typeofwork) {
+                //     pubresource.typeofwork = { "@id": `#${encodeURIComponent(row.typeofwork)}` };
+                // }
+                if (row.prepared) {
+                    rows.push({
+                        "@id": `#${encodeURIComponent(row.prepared)}`,
+                        "@type": "Person",
+                        name: row.prepared,
+                    });
+                    pubresource.preparedBy = { "@id": `#${encodeURIComponent(row.prepared)}` };
                 }
                 mapEntityProperties(row, pubresource, properties);
+                extractEntity({
+                    rows,
+                    entity: pubresource,
+                    type: "Place",
+                    value: row.placepublished,
+                    property: "place",
+                });
                 rows.push(pubresource);
             }
             offset += pageSize;

@@ -11,18 +11,17 @@ export class RelatedResource {
             for (let row of await models.relatedresource.findAll({ limit: pageSize, offset })) {
                 // console.log(row.get());
                 const properties = [
-                    "rrno",
-                    "rrstartdate",
-                    "rrsdatemod",
-                    "rrstart",
-                    "rrenddate",
-                    "rrdatemod",
-                    "rrend",
-                    "rrdatequal",
-                    "rrnote",
-                    "rrrating",
-                    "rrappenddate",
-                    "rrlastmodd",
+                    ["rrstartdate", "startDate"],
+                    ["rrsdatemod", "startDateModifier"],
+                    ["rrstart", "startDateISOString"],
+                    ["rrenddate", "endDate"],
+                    ["rrdatemod", "endDateModifier"],
+                    ["rrend", "endDateISOString"],
+                    ["rrdatequal", "dateQualifier"],
+                    ["rrnote", "processingNotes"],
+                    ["rrrating", "relationshipStrength"],
+                    ["rrappenddate", "recordAppendDate"],
+                    ["rrlastmodd", "recordLastModified"],
                 ];
                 const relatedResource = {
                     "@id": `#${encodeURIComponent(row.rid)}-${encodeURIComponent(row.rrid)}`,

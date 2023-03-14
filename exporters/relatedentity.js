@@ -11,18 +11,17 @@ export class RelatedEntity {
             for (let row of await models.relatedentity.findAll({ limit: pageSize, offset })) {
                 // console.log(row.get());
                 const properties = [
-                    "restartdate",
-                    "resdatemod",
-                    "restart",
-                    "reenddate",
-                    "reedatemod",
-                    "reend",
-                    "redatequal",
-                    "renote",
-                    "rerating",
-                    "reappenddate",
-                    "relastmodd",
-                    "reprepared",
+                    ["restartdate", "startDate"],
+                    ["resdatemod", "startDateModifier"],
+                    ["restart", "startDateISOString"],
+                    ["reenddate", "endDate"],
+                    ["reedatemod", "endDateModifer"],
+                    ["reend", "endDateISOString"],
+                    ["redatequal", "dateQualifier"],
+                    ["renote", "processingNotes"],
+                    ["rerating", "relationshipStrength"],
+                    ["reappenddate", "recordAppendDate"],
+                    ["relastmodd", "recordLastModified"],
                     "reorder",
                 ];
                 const relationship = {
@@ -34,6 +33,14 @@ export class RelatedEntity {
                     relationshipObject: { "@id": `#${encodeURIComponent(row.reid)}` },
                     relationshipSubject: { "@id": `#${encodeURIComponent(row.eid)}` },
                 };
+                if (row.reprepared) {
+                    rows.push({
+                        "@id": `#${encodeURIComponent(row.reprepared)}`,
+                        "@type": "Person",
+                        name: row.reprepared,
+                    });
+                    relationship.preparedBy = { "@id": `#${encodeURIComponent(row.reprepared)}` };
+                }
                 mapEntityProperties(row, relationship, properties);
                 rows.push(relationship);
             }
