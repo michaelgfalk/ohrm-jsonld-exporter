@@ -22,7 +22,7 @@ services:
         working_dir: /srv/exporter
         volumes:
             - ./data:/srv/data
-            - ohrm_db:/postgresql
+            - ./pgdata:/postgresql
         ports:
            - 5432:5432
     exporter:
