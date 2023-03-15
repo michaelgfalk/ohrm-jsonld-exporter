@@ -40,6 +40,7 @@ export class DObjectVersion {
                     dobjectIdentifier: row.doid,
                     name: row.dovtitle ?? row.dov,
                     description: row.dovdescription,
+                    dobject: { "@id": `#${encodeURIComponent(row.doid)}` },
                 };
                 if (row.arcid) dobject.linkedArchivalResource = { "@id": row.arcid };
                 if (row.pubid) dobject.linkedPublishedResource = { "@id": row.pubid };
