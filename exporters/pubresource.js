@@ -42,13 +42,17 @@ export class PubResource {
                     ["processing", "processingNotes"],
                     ["status", "outputStatus"],
                 ];
+                const workType = row.typeofwork || "";
 
                 const pubresource = {
                     "@id": `#${encodeURIComponent(row.pubid)}`,
-                    "@type": ["PublishedResource", row.type, row.typeofwork],
+                    "@type": ["PublishedResource", row.type.replace(/\s/g, "")],
                     identifier: row.pubid,
                     name: row.title,
                 };
+                if (workType) {
+                    pubresource["@type"].push(workType.replace(/\s/, ""))
+                }
                 // if (row.typeofwork) {
                 //     pubresource.typeofwork = { "@id": `#${encodeURIComponent(row.typeofwork)}` };
                 // }

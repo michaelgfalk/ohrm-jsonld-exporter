@@ -13,6 +13,8 @@ export class TypeOf {
         return rows;
     }
     async exportArFormats({ model }) {
+        console.log("HERE AT exportArFormats");
+        doesnotrun;
         let offset = 0;
         let rows = [];
         let total = await model.count();

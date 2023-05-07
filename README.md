@@ -28,15 +28,14 @@ mounted into the container `/srv/data`.
     -   `cd /srv/data/DHRA-sql`
     -   `psql dhra < initialiseDHRA.sql`
 
-The OHRM data is now loaded into the database. As the container is backed by a persistent volume in
+The OHRM data is now in the database. As the container is backed by a persistent volume in
 docker you will not need to do these steps again the next time you start the DB unless you remove
 that volume. Repeat these steps to load more OHRM datasets into this database instance.
 
 ## Working with an OHRM dataset
 
--   Let's say you want to work with the DHRA OHRM:
+-   To work with the DHRA OHRM:
 
--
 -   start the database server if required: `docker compose up -d`
 -   in one terminal connect to the DB container and then the database:
     -   `docker exec -it ohrm-jsonld-exporter-db-1 /bin/bash`
@@ -46,8 +45,8 @@ that volume. Repeat these steps to load more OHRM datasets into this database in
     -   install dependencies: `npm install`
     -   define which database you want to work with by setting an environment variables:
         `export DB_DATABASE='dhra'`
-    -   export the ohrm data to the data folder as one big RO crate file:
-        `node . -o ./data/dhra-jsonld`
+    -   export the ohrm data to the data folder as one big RO crate file and generate a second crate which describes the Schema for that data as per the Schema.org approach:
+        `node . -o ./data/dhra-jsonld -v ./data/dhra-schema`
     -   export the ohrm data and print to STDOUT as one big RO crate file: `node .`
 
 ## Repository Layout / Code overview

@@ -1,5 +1,5 @@
 import lodashPkg from "lodash";
-const { isArray } = lodashPkg;
+const { isArray, union } = lodashPkg;
 
 export const pageSize = 100;
 

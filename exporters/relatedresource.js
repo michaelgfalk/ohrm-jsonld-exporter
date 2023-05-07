@@ -25,7 +25,7 @@ export class RelatedResource {
                 ];
                 const relatedResource = {
                     "@id": `#${encodeURIComponent(row.rid)}-${encodeURIComponent(row.rrid)}`,
-                    "@type": ["Relationship", row.rtype],
+                    "@type": ["Relationship", row.rtype.replace(/\s/g, "")],
                     identifier: `${row.eid}-${row.reid}`,
                     name: `#${encodeURIComponent(row.rid)}-${encodeURIComponent(row.rrid)}`,
                     description: row.rrdescription,

@@ -36,11 +36,12 @@ export class DObjectVersion {
 
                 const dobject = {
                     "@id": encodeURI(row.dov),
-                    "@type": ["File", "DigitalObject", row.dovtype],
+                    "@type": ["File"],
                     dobjectIdentifier: row.doid,
                     name: row.dovtitle ?? row.dov,
                     description: row.dovdescription,
                     dobject: { "@id": `#${encodeURIComponent(row.doid)}` },
+                    encodingFormat:  row.dovtype
                 };
                 if (row.arcid) dobject.linkedArchivalResource = { "@id": row.arcid };
                 if (row.pubid) dobject.linkedPublishedResource = { "@id": row.pubid };

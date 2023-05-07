@@ -43,7 +43,7 @@ export class Entity {
                     "x_efunction",
                 ];
 
-                let type = row.etype.split("-").map((v) => v.trim());
+                let type = row.etype.split("-").map((v) => v.trim().replace(" ", "_"));
 
                 let alsoKnownAs = await models.entityname.findAll({
                     where: { eid: row.eid },
@@ -63,6 +63,11 @@ export class Entity {
                     alsoKnownAs: alsoKnownAs.map((e) => ({ "@id": e["@id"] })),
                     relatedEvents: entityEvent.map((e) => ({ "@id": e["@id"] })),
                 };
+
+                //console.log("TYPES", type);
+
+                // TODO -- Add vocab classes for ENTITY
+                
                 mapEntityProperties(row, entity, properties);
 
                 extractEntity({

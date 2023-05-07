@@ -26,7 +26,7 @@ export class RelatedEntity {
                 ];
                 const relationship = {
                     "@id": `#${encodeURIComponent(row.eid)}-${encodeURIComponent(row.reid)}`,
-                    "@type": ["Relationship", row.rerelationship],
+                    "@type": ["Relationship", row.rerelationship.replace(/\s/g, "_")],
                     identifier: `${row.eid}-${row.reid}`,
                     name: row.rerelationship,
                     description: row.redescription,

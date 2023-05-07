@@ -28,7 +28,7 @@ export class Function {
 
                 const entityFunction = {
                     "@id": `#${encodeURIComponent(row.fid)}`,
-                    "@type": ["Function", row.fname],
+                    "@type": ["Function"],
                     identifier: row.fid,
                     name: row.fname,
                     description: row.fdescription,

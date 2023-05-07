@@ -27,7 +27,7 @@ export class EntityDobjectRelationship {
                 ];
                 const relationship = {
                     "@id": `#${encodeURIComponent(row.doid)}-${encodeURIComponent(row.eid)}`,
-                    "@type": ["Relationship", row.relationship],
+                    "@type": ["Relationship", row.relationship.replace(/\s/g, "_")],
                     identifier: `${row.doid}-${row.eid}`,
                     description: row.description,
                     source: { "@id": `#${encodeURIComponent(row.doid)}` },
