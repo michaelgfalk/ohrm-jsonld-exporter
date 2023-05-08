@@ -1,11 +1,11 @@
 # OHRM -> JSON-LD export tool
 
-- [OHRM -\> JSON-LD export tool](#ohrm---json-ld-export-tool)
-- [Developing the code](#developing-the-code)
-  - [Get the data](#get-the-data)
-  - [Start the postgres container and load an OHRM DB dump](#start-the-postgres-container-and-load-an-ohrm-db-dump)
-  - [Working with an OHRM dataset](#working-with-an-ohrm-dataset)
-  - [Repository Layout / Code overview](#repository-layout--code-overview)
+-   [OHRM -\> JSON-LD export tool](#ohrm---json-ld-export-tool)
+-   [Developing the code](#developing-the-code)
+    -   [Get the data](#get-the-data)
+    -   [Start the postgres container and load an OHRM DB dump](#start-the-postgres-container-and-load-an-ohrm-db-dump)
+    -   [Working with an OHRM dataset](#working-with-an-ohrm-dataset)
+    -   [Repository Layout / Code overview](#repository-layout--code-overview)
 
 # Developing the code
 
@@ -28,9 +28,9 @@ mounted into the container `/srv/data`.
     -   `cd /srv/data/DHRA-sql`
     -   `psql dhra < initialiseDHRA.sql`
 
-The OHRM data is now in the database. As the container is backed by a persistent volume in
-docker you will not need to do these steps again the next time you start the DB unless you remove
-that volume. Repeat these steps to load more OHRM datasets into this database instance.
+The OHRM data is now in the database. As the container is backed by a persistent volume in docker
+you will not need to do these steps again the next time you start the DB unless you remove that
+volume. Repeat these steps to load more OHRM datasets into this database instance.
 
 ## Working with an OHRM dataset
 
@@ -45,8 +45,8 @@ that volume. Repeat these steps to load more OHRM datasets into this database in
     -   install dependencies: `npm install`
     -   define which database you want to work with by setting an environment variables:
         `export DB_DATABASE='dhra'`
-    -   export the ohrm data to the data folder as one big RO crate file and generate a second crate which describes the Schema for that data as per the Schema.org approach:
-        `node . -o ./data/dhra-jsonld -v ./data/dhra-schema`
+    -   export the ohrm data to the data folder as one big RO crate file
+        `node . -o ./data/dhra-jsonld`
     -   export the ohrm data and print to STDOUT as one big RO crate file: `node .`
 
 ## Repository Layout / Code overview

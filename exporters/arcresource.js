@@ -36,29 +36,15 @@ export class ArcResource {
                     ["arstatus", "outputStatus"],
                 ];
 
-
-
                 const arcresource = {
                     "@id": `#${encodeURIComponent(row.arcid)}`,
-                    "@type": "ArchivalResource", //["ArchiveResource", "HeritageResource"], 
-                    //Not sure that that two types are needed and ArchiveResource looks like a typo
+                    "@type": ["ArchiveResource", "HeritageResource"],
                     identifier: row.arcid,
                     name: row.artitle,
                     subTitle: row.arsubtitle,
                     description: row.ardescription,
                 };
-                console.log(arcresource)
-                doesnotrun;
                 mapEntityProperties(row, arcresource, properties);
-                // This was being pushed multiple times
-                // better to just have a type ArchivalResource?
-                /*
-                rows.push({
-                    "@id": "#ArchivalResource",
-                    "@type": "EntityType",
-                    name: "Archival Resource",
-                });
-                */
                 if (row.arprepared) {
                     rows.push({
                         "@id": `#${encodeURIComponent(row.arprepared)}`,

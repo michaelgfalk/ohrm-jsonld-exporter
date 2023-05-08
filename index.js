@@ -4,7 +4,6 @@ const { ensureDir, writeJSON } = fsExtraPkg;
 import { Sequelize } from "sequelize";
 import initModels from "./models/init-models.js";
 
-
 import {
     ArcResource,
     DObject,
@@ -33,16 +32,11 @@ const argv = yargs(process.argv.slice(2))
         describe: "A path to output the JSON-LD files",
         type: "string",
     })
-    
+
     .help().argv;
-
-
-
 
 main();
 async function main() {
-
-   
     let sequelize = new Sequelize(
         configuration.databaseConfig.database,
         configuration.databaseConfig.username,
@@ -63,27 +57,12 @@ async function main() {
     if (argv.outputPath) await ensureDir(argv.outputPath);
 
     const crate = new ROCrate({ array: true, link: true });
-    const vocabCrate = new ROCrate({ array: true, link: true });
-    //Hack -- need to sort out the additional RO-Crate vocab stuff
-    vocabCrate.addContext({"RepositoryObject": "http://pcdm.org/2016/04/18/models#Object"})
-    const schemaOrgCrate = new ROCrate({ array: true, link: true });
-
-
-    
-
-
-
-
-
-
-
-
-
     // the name property is where those entities will be attached to the root dataset
     //   so for example: ArchivalResources will be at crate.rootDataset.archivalResource
 
     // TODO: (ptsefton) This might be better done with a generic hasPart relationship -- avoid a lot of extra props
-
+    //  Included initially so that the data can be demonstrated with Describo and there would
+    //   be entry points to each type of data from the root dataset.
     const resources = [
         { obj: ArcResource, name: "archivalResources" },
         { obj: DObject, name: "digitalObjects" },
@@ -108,18 +87,13 @@ async function main() {
 
     // iterate over all entities of type Relationship and link the entity
     //   back to the related entities
-    var i =0;
-    const propTargets = {};
-    const extraContext = {};
+    var i = 0;
     // PT: Added more informative names
     for (let entity of crate.entities()) {
-
-
-
         if (entity["@type"].includes("Relationship")) {
             var relationshipName = "";
             if (entity["@type"].length > 1) {
-                entity["@type"] = entity["@type"].filter(x => x != "Relationship");
+                entity["@type"] = entity["@type"].filter((x) => x != "Relationship");
             }
             try {
                 let srcEntity = crate.getEntity(entity.source[0]["@id"]);
@@ -128,56 +102,23 @@ async function main() {
             } catch (error) {
                 console.log(`Can't find source: ${entity.source[0]["@id"]}`);
             }
-            relationshipName += `${entity["@type"]} -> `
+            relationshipName += `${entity["@type"]} -> `;
             try {
                 let tgtEntity = crate.getEntity(entity.target[0]["@id"]);
                 crate.addValues(tgtEntity, "targetOf", entity, false);
-                relationshipName += `${tgtEntity.name}`
+                relationshipName += `${tgtEntity.name}`;
             } catch (error) {
                 console.log(`Can't find target: ${entity.target[0]["@id"]}`);
             }
             entity.name = relationshipName;
         }
-        
-
     }
-   
-
-    // TODO -- put this in a crate utils function as it will be useful elsewhere 
-    // Putting both loops here so it is easier to extract
-
-    // Add links to titles 
-    const nameIndex = {}
-    for (let entity of crate.entities()) {
-        for (let n of entity.name || []) {
-            if (n) {
-                nameIndex[n] = entity;  
-            } 
-        }
-    }
-
-    for (let entity of crate.entities()) {
-        for (let p of Object.keys(entity)) {
-            if (!p.startsWith("@") && !(p==="name")) {
-                if (entity[p]) {
-                    entity[p] = entity[p].map((v) => {
-                        if (nameIndex[v]) {
-                            //console.log("LInkin'", v)
-                        }
-                        return nameIndex[v] || v;
-                    })
-            }
-            }
-        }
-    }
-   
     if (argv.outputPath) {
         await ensureDir(argv.outputPath);
         await writeJSON(path.join(argv.outputPath, "ro-crate-metadata.json"), crate, { spaces: 4 });
     } else {
         console.log(JSON.stringify(crate.toJSON(), null, 2));
     }
-    
 
     await sequelize.close();
     process.exit();

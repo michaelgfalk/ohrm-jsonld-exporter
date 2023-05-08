@@ -51,7 +51,7 @@ export class PubResource {
                     name: row.title,
                 };
                 if (workType) {
-                    pubresource["@type"].push(workType.replace(/\s/, ""))
+                    pubresource["@type"].push(workType.replace(/\s/, ""));
                 }
                 // if (row.typeofwork) {
                 //     pubresource.typeofwork = { "@id": `#${encodeURIComponent(row.typeofwork)}` };
