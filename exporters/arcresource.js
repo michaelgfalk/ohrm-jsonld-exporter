@@ -16,7 +16,7 @@ export class ArcResource {
                     ["arrepreflink", "archiveLink"],
                     ["arlanguage", "resourceLanguage"],
                     ["arstatedate", "startDate"],
-                    ["arsdatemod", "dateModifier"],
+                    ["arsdatemod", "startDateModifier"],
                     ["arstart", "startDateISOString"],
                     ["arenddate", "endDate"],
                     ["aredatemod", "endDateModifier"],

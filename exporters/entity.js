@@ -67,7 +67,7 @@ export class Entity {
                 //console.log("TYPES", type);
 
                 // TODO -- Add vocab classes for ENTITY
-                
+
                 mapEntityProperties(row, entity, properties);
 
                 extractEntity({
