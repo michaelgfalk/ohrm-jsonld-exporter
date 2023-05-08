@@ -9,7 +9,7 @@ export class ArcResource {
         let total = await models.arcresource.count();
         while (offset <= total) {
             for (let row of await models.arcresource.findAll({ limit: pageSize, offset })) {
-                console.log(row.get());
+                // console.log(row.get());
                 const properties = [
                     ["repid", "repositoryId"],
                     ["arrepref", "archiveIdentifier"],
