@@ -1,4 +1,5 @@
 import { pageSize, mapEntityProperties } from "./config.js";
+import { extractEntity } from "./common.js";
 
 export class RelatedResource {
     constructor() {}
@@ -23,6 +24,8 @@ export class RelatedResource {
                     ["rrappenddate", "recordAppendDate"],
                     ["rrlastmodd", "recordLastModified"],
                 ];
+                if (!row.rid) continue;
+                if (!row.rrid) continue;
                 const relatedResource = {
                     "@id": `#${encodeURIComponent(row.rid)}-${encodeURIComponent(row.rrid)}`,
                     "@type": ["Relationship", row.rtype.replace(/\s/g, "")],

@@ -1,4 +1,5 @@
 import { pageSize, mapEntityProperties } from "./config.js";
+import { extractEntity } from "./common.js";
 
 export class RelatedEntity {
     constructor() {}
@@ -24,6 +25,8 @@ export class RelatedEntity {
                     ["relastmodd", "recordLastModified"],
                     "reorder",
                 ];
+                if (!row.eid) continue;
+                if (!row.reid) continue;
                 const relationship = {
                     "@id": `#${encodeURIComponent(row.eid)}-${encodeURIComponent(row.reid)}`,
                     "@type": ["Relationship", row.rerelationship.replace(/\s/g, "_")],
@@ -33,15 +36,21 @@ export class RelatedEntity {
                     source: { "@id": `#${encodeURIComponent(row.reid)}` },
                     target: { "@id": `#${encodeURIComponent(row.eid)}` },
                 };
-                if (row.reprepared) {
-                    rows.push({
-                        "@id": `#${encodeURIComponent(row.reprepared)}`,
-                        "@type": "Person",
-                        name: row.reprepared,
-                    });
-                    relationship.preparedBy = { "@id": `#${encodeURIComponent(row.reprepared)}` };
-                }
                 mapEntityProperties(row, relationship, properties);
+
+                let extractEntities = [
+                    { type: "Person", value: row.reprepared, property: "preparedBy" },
+                ];
+                for (let e of extractEntities) {
+                    if (e.value) {
+                        let d = extractEntity({
+                            type: e.type,
+                            value: e.value,
+                        });
+                        rows.push(d);
+                        relationship[e.property] = { "@id": d["@id"] };
+                    }
+                }
                 rows.push(relationship);
             }
             offset += pageSize;

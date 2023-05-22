@@ -29,14 +29,17 @@ export class Entity {
                 };
 
                 mapEntityProperties(row, entity, properties);
-
-                extractEntity({
-                    rows,
-                    entity,
-                    type: "Place",
-                    value: row.enplace,
-                    property: "place",
-                });
+                let extractEntities = [{ type: "Place", value: row.enplace, property: "place" }];
+                for (let e of extractEntities) {
+                    if (e.value) {
+                        let d = extractEntity({
+                            type: e.type,
+                            value: e.value,
+                        });
+                        rows.push(d);
+                        entity[e.property] = { "@id": d["@id"] };
+                    }
+                }
 
                 // push the entity definition into the graph
                 rows.push(entity);

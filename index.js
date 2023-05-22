@@ -19,7 +19,7 @@ import {
 } from "./exporters/index.js";
 
 import lodashPkg from "lodash";
-const { isArray, union, clone } = lodashPkg;
+const { isArray, union, clone, uniqBy } = lodashPkg;
 import { ROCrate } from "ro-crate";
 import * as configuration from "./configuration.js";
 import yargs from "yargs/yargs";
@@ -77,18 +77,45 @@ async function main() {
         { obj: RelatedResource, name: "resourceRelationships" },
     ];
 
+    const typeMaps = {
+        Person: [],
+        Place: [],
+        State: [],
+        Country: [],
+        Location: [],
+        Nationality: [],
+        Contact: [],
+    };
     // run all the exporters
+    let extractEntitiesOfType = Object.keys(typeMaps);
     for (let { obj, name } of resources) {
         let resource = new obj();
         let entities = await resource.export({ models });
-        entities.forEach((entity) => crate.addEntity(entity));
-        crate.rootDataset[name] = entities.map((e) => ({ "@id": e["@id"] }));
+        entities.forEach((entity) => {
+            if (extractEntitiesOfType.includes(entity["@type"])) {
+                typeMaps[entity["@type"]].push(entity);
+            } else {
+                crate.addEntity(entity);
+            }
+        });
+        crate.rootDataset[name] = entities
+            .filter((e) => !extractEntitiesOfType.includes(e["@type"]))
+            .map((e) => ({ "@id": e["@id"] }));
+    }
+
+    for (let type of Object.keys(typeMaps)) {
+        typeMaps[type] = uniqBy(typeMaps[type], "@id");
+        typeMaps[type].forEach((entity) => {
+            crate.addEntity(entity);
+        });
+        crate.rootDataset[type] = typeMaps[type].map((e) => ({ "@id": e["@id"] }));
     }
 
     // iterate over all entities of type Relationship and link the entity
     //   back to the related entities
     var i = 0;
     // PT: Added more informative names
+    let relationshipsToRemove = [];
     for (let entity of crate.entities()) {
         if (entity["@type"].includes("Relationship")) {
             var relationshipName = "";
@@ -100,7 +127,8 @@ async function main() {
                 crate.addValues(srcEntity, "sourceOf", entity, false);
                 relationshipName += `${srcEntity.name} -> `;
             } catch (error) {
-                console.log(`Can't find source: ${entity.source[0]["@id"]}`);
+                // console.log(`Can't find source: ${entity.source[0]["@id"]}`);
+                relationshipsToRemove.push(entity);
             }
             relationshipName += `${entity["@type"]} -> `;
             try {
@@ -108,10 +136,14 @@ async function main() {
                 crate.addValues(tgtEntity, "targetOf", entity, false);
                 relationshipName += `${tgtEntity.name}`;
             } catch (error) {
-                console.log(`Can't find target: ${entity.target[0]["@id"]}`);
+                // console.log(`Can't find target: ${entity.target[0]["@id"]}`);
+                relationshipsToRemove.push(entity);
             }
             entity.name = relationshipName;
         }
+    }
+    for (let entity of relationshipsToRemove) {
+        crate.deleteEntity(entity["@id"]);
     }
     if (argv.outputPath) {
         await ensureDir(argv.outputPath);

@@ -26,6 +26,8 @@ export class EntityFunctionRelationship {
                     ["eflastmodd", "recordLastModified"],
                     "ordering",
                 ];
+                if (!row.eid) continue;
+                if (!row.fid) continue;
                 const relationship = {
                     "@id": `#${encodeURIComponent(row.eid)}-${encodeURIComponent(row.fid)}`,
                     "@type": ["Relationship"],
@@ -34,37 +36,24 @@ export class EntityFunctionRelationship {
                     source: { "@id": `#${encodeURIComponent(row.eid)}` },
                     target: { "@id": `#${encodeURIComponent(row.fid)}` },
                 };
-                if (row.efprepared) {
-                    rows.push({
-                        "@id": `#${encodeURIComponent(row.efprepared)}`,
-                        "@type": "Person",
-                        name: row.efprepared,
-                    });
-                    relationship.preparedBy = { "@id": `#${encodeURIComponent(row.efprepared)}` };
-                }
                 mapEntityProperties(row, relationship, properties);
 
-                extractEntity({
-                    rows,
-                    entity: relationship,
-                    type: "Place",
-                    value: row.efplace,
-                    property: "place",
-                });
-                extractEntity({
-                    rows,
-                    entity: relationship,
-                    type: "State",
-                    value: row.efplacestate,
-                    property: "state",
-                });
-                extractEntity({
-                    rows,
-                    entity: relationship,
-                    type: "Country",
-                    value: row.efplacecountry,
-                    property: "country",
-                });
+                let extractEntities = [
+                    { type: "Person", value: row.efprepared, property: "preparedBy" },
+                    { type: "Place", value: row.efplace, property: "place" },
+                    { type: "State", value: row.efplacestate, property: "state" },
+                    { type: "Country", value: row.efplacecountry, property: "country" },
+                ];
+                for (let e of extractEntities) {
+                    if (e.value) {
+                        let d = extractEntity({
+                            type: e.type,
+                            value: e.value,
+                        });
+                        rows.push(d);
+                        relationship[e.property] = { "@id": d["@id"] };
+                    }
+                }
                 rows.push(relationship);
             }
             offset += pageSize;

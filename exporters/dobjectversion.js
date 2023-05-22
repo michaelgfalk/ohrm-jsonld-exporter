@@ -45,13 +45,18 @@ export class DObjectVersion {
                 if (row.arcid) dobject.linkedArchivalResource = { "@id": row.arcid };
                 if (row.pubid) dobject.linkedPublishedResource = { "@id": row.pubid };
                 mapEntityProperties(row, dobject, properties);
-                extractEntity({
-                    rows,
-                    entity: dobject,
-                    type: "Place",
-                    value: row.doplace,
-                    property: "place",
-                });
+
+                let extractEntities = [{ type: "Place", value: row.doplace, property: "place" }];
+                for (let e of extractEntities) {
+                    if (e.value) {
+                        let d = extractEntity({
+                            type: e.type,
+                            value: e.value,
+                        });
+                        rows.push(d);
+                        dobject[e.property] = { "@id": d["@id"] };
+                    }
+                }
                 rows.push(dobject);
             }
             offset += pageSize;

@@ -25,6 +25,8 @@ export class EntityArchivalRelationship {
                     ["earlastmodd", "recordLastModified"],
                     "earereference",
                 ];
+                if (!row.arcid) continue;
+                if (!row.eid) continue;
                 const relationship = {
                     "@id": `#${encodeURIComponent(row.arcid)}-${encodeURIComponent(row.eid)}`,
                     "@type": ["Relationship", row.relationship.replace(/\s/g, "_")],
@@ -33,23 +35,22 @@ export class EntityArchivalRelationship {
                     source: { "@id": `#${encodeURIComponent(row.arcid)}` },
                     target: { "@id": `#${encodeURIComponent(row.eid)}` },
                 };
-                if (row.earprepared) {
-                    rows.push({
-                        "@id": `#${encodeURIComponent(row.earprepared)}`,
-                        "@type": "Person",
-                        name: row.earprepared,
-                    });
-                    relationship.preparedBy = { "@id": `#${encodeURIComponent(row.earprepared)}` };
-                }
                 mapEntityProperties(row, relationship, properties);
 
-                extractEntity({
-                    rows,
-                    entity: relationship,
-                    type: "Place",
-                    value: row.earplace,
-                    property: "place",
-                });
+                let extractEntities = [
+                    { type: "Person", value: row.earprepared, property: "preparedBy" },
+                    { type: "Place", value: row.earplace, property: "place" },
+                ];
+                for (let e of extractEntities) {
+                    if (e.value) {
+                        let d = extractEntity({
+                            type: e.type,
+                            value: e.value,
+                        });
+                        rows.push(d);
+                        relationship[e.property] = { "@id": d["@id"] };
+                    }
+                }
                 rows.push(relationship);
             }
             offset += pageSize;

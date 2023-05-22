@@ -47,33 +47,27 @@ export class DObject {
                     dobject.linkedArchivalResource = { "@id": `#${encodeURIComponent(row.arcid)}` };
                 }
 
-                // row.arcid seems to be always missing -- trying a hac
-                // Remove linked from prop name as it is redundant
                 if (row.pubid) {
                     dobject.linkedPublishedResource = {
                         "@id": `#${encodeURIComponent(row.pubid)}`,
                     };
-                    //console.log("Found pubid", dobject)
-                    // } else {
-                    //     // HACK this works some of the time on DHRA -- TODO -- fix
-                    //     dobject.publishedResource = { "@id": dobject["@id"].replace(/D0/, "PR") };
                 }
                 mapEntityProperties(row, dobject, properties);
-                if (row.doprepared) {
-                    rows.push({
-                        "@id": `#${encodeURIComponent(row.doprepared)}`,
-                        "@type": "Person",
-                        name: row.doprepared,
-                    });
-                    dobject.preparedBy = { "@id": `#${encodeURIComponent(row.doprepared)}` };
+
+                let extractEntities = [
+                    { type: "Person", value: row.doprepared, property: "preparedBy" },
+                    { type: "Place", value: row.doplace, property: "place" },
+                ];
+                for (let e of extractEntities) {
+                    if (e.value) {
+                        let d = extractEntity({
+                            type: e.type,
+                            value: e.value,
+                        });
+                        rows.push(d);
+                        dobject[e.property] = { "@id": d["@id"] };
+                    }
                 }
-                extractEntity({
-                    rows,
-                    entity: dobject,
-                    type: "Place",
-                    value: row.doplace,
-                    property: "place",
-                });
                 rows.push(dobject);
             }
             offset += pageSize;

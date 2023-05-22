@@ -70,62 +70,26 @@ export class Entity {
 
                 mapEntityProperties(row, entity, properties);
 
-                extractEntity({
-                    rows,
-                    entity,
-                    type: "Person",
-                    value: row.eprepared,
-                    property: "preparedBy",
-                });
-                extractEntity({
-                    rows,
-                    entity,
-                    type: "Place",
-                    value: row.ebthplace,
-                    property: "birthPlace",
-                });
-                extractEntity({
-                    rows,
-                    entity,
-                    type: "State",
-                    value: row.ebthstate,
-                    property: "birthState",
-                });
-                extractEntity({
-                    rows,
-                    entity,
-                    type: "Country",
-                    value: row.ebthcountry,
-                    property: "birthCountry",
-                });
-                extractEntity({
-                    rows,
-                    entity,
-                    type: "Place",
-                    value: row.edthplace,
-                    property: "deathPlace",
-                });
-                extractEntity({
-                    rows,
-                    entity,
-                    type: "State",
-                    value: row.edthstate,
-                    property: "deathState",
-                });
-                extractEntity({
-                    rows,
-                    entity,
-                    type: "Country",
-                    value: row.edthcountry,
-                    property: "deathCountry",
-                });
-                extractEntity({
-                    rows,
-                    entity,
-                    type: "Nationality",
-                    value: row.enationality,
-                    property: "nationality",
-                });
+                let extractEntities = [
+                    { type: "Person", value: row.eprepared, property: "preparedBy" },
+                    { type: "Place", value: row.ebthplace, property: "birthPlace" },
+                    { type: "State", value: row.ebthstate, property: "birthState" },
+                    { type: "Country", value: row.ebthCountry, property: "birthCountry" },
+                    { type: "Place", value: row.edthplace, property: "deathPlace" },
+                    { type: "State", value: row.edthstate, property: "deathState" },
+                    { type: "Country", value: row.edthCountry, property: "deathCountry" },
+                    { type: "Nationality", value: row.enationality, property: "nationality" },
+                ];
+                for (let e of extractEntities) {
+                    if (e.value) {
+                        let d = extractEntity({
+                            type: e.type,
+                            value: e.value,
+                        });
+                        rows.push(d);
+                        entity[e.property] = { "@id": d["@id"] };
+                    }
+                }
 
                 // push the entity definition into the graph
                 rows.push(entity);

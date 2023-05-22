@@ -33,20 +33,20 @@ export class Entity {
                 };
                 mapEntityProperties(row, event, properties);
 
-                extractEntity({
-                    rows,
-                    entity: event,
-                    type: "Location",
-                    value: row.eelocation,
-                    property: "location",
-                });
-                extractEntity({
-                    rows,
-                    entity: event,
-                    type: "Person",
-                    value: row.eeprepared,
-                    property: "preparedBy",
-                });
+                let extractEntities = [
+                    { type: "Location", value: row.eelocation, property: "location" },
+                    { type: "Person", value: row.eeprepared, property: "preparedBy" },
+                ];
+                for (let e of extractEntities) {
+                    if (e.value) {
+                        let d = extractEntity({
+                            type: e.type,
+                            value: e.value,
+                        });
+                        rows.push(d);
+                        event[e.property] = { "@id": d["@id"] };
+                    }
+                }
 
                 // push the entity definition into the graph
                 rows.push(entity);

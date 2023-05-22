@@ -38,7 +38,7 @@ export class ArcResource {
 
                 const arcresource = {
                     "@id": `#${encodeURIComponent(row.arcid)}`,
-                    "@type": ["ArchiveResource", "HeritageResource"],
+                    "@type": "ArchivalResource",
                     identifier: row.arcid,
                     name: row.artitle,
                     subTitle: row.arsubtitle,
@@ -53,6 +53,20 @@ export class ArcResource {
                     });
                     arcresource.preparedBy = { "@id": `#${encodeURIComponent(row.arprepared)}` };
                 }
+                let extractEntities = [
+                    { type: "Person", value: row.arprepared, property: "preparedBy" },
+                ];
+                for (let e of extractEntities) {
+                    if (e.value) {
+                        let d = extractEntity({
+                            type: e.type,
+                            value: e.value,
+                        });
+                        rows.push(d);
+                        arcresource[e.property] = { "@id": d["@id"] };
+                    }
+                }
+
                 rows.push(arcresource);
             }
             offset += pageSize;

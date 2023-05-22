@@ -53,25 +53,23 @@ export class PubResource {
                 if (workType) {
                     pubresource["@type"].push(workType.replace(/\s/, ""));
                 }
-                // if (row.typeofwork) {
-                //     pubresource.typeofwork = { "@id": `#${encodeURIComponent(row.typeofwork)}` };
-                // }
-                if (row.prepared) {
-                    rows.push({
-                        "@id": `#${encodeURIComponent(row.prepared)}`,
-                        "@type": "Person",
-                        name: row.prepared,
-                    });
-                    pubresource.preparedBy = { "@id": `#${encodeURIComponent(row.prepared)}` };
-                }
                 mapEntityProperties(row, pubresource, properties);
-                extractEntity({
-                    rows,
-                    entity: pubresource,
-                    type: "Place",
-                    value: row.placepublished,
-                    property: "place",
-                });
+
+                let extractEntities = [
+                    { type: "Person", value: row.prepared, property: "preparedBy" },
+                    { type: "Place", value: row.placepublished, property: "place" },
+                ];
+                for (let e of extractEntities) {
+                    if (e.value) {
+                        let d = extractEntity({
+                            type: e.type,
+                            value: e.value,
+                        });
+                        rows.push(d);
+                        console.log(d, pubresource);
+                        pubresource[e.property] = { "@id": d["@id"] };
+                    }
+                }
                 rows.push(pubresource);
             }
             offset += pageSize;

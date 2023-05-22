@@ -28,7 +28,7 @@ export class Contact {
 
                 const contact = {
                     "@id": `#${encodeURIComponent(row.cid)}`,
-                    "@type": ["Contact"],
+                    "@type": "Contact",
                     identifier: row.cid,
                     name: row.title,
                 };

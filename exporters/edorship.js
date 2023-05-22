@@ -25,7 +25,9 @@ export class EntityDobjectRelationship {
                     "edoereference",
                     "edogallery",
                 ];
-                const relationship = {
+                if (!row.doid) continue;
+                if (!row.eid) continue;
+                let relationship = {
                     "@id": `#${encodeURIComponent(row.doid)}-${encodeURIComponent(row.eid)}`,
                     "@type": ["Relationship", row.relationship.replace(/\s/g, "_")],
                     identifier: `${row.doid}-${row.eid}`,
@@ -33,23 +35,22 @@ export class EntityDobjectRelationship {
                     source: { "@id": `#${encodeURIComponent(row.doid)}` },
                     target: { "@id": `#${encodeURIComponent(row.eid)}` },
                 };
-                if (row.edoprepared) {
-                    rows.push({
-                        "@id": `#${encodeURIComponent(row.edoprepared)}`,
-                        "@type": "Person",
-                        name: row.edoprepared,
-                    });
-                    relationship.preparedBy = { "@id": `#${encodeURIComponent(row.edoprepared)}` };
-                }
                 mapEntityProperties(row, relationship, properties);
 
-                extractEntity({
-                    rows,
-                    entity: relationship,
-                    type: "Place",
-                    value: row.edoplace,
-                    property: "place",
-                });
+                let extractEntities = [
+                    { type: "Person", value: row.edoprepared, property: "preparedBy" },
+                    { type: "Place", value: row.edoplace, property: "place" },
+                ];
+                for (let e of extractEntities) {
+                    if (e.value) {
+                        let d = extractEntity({
+                            type: e.type,
+                            value: e.value,
+                        });
+                        rows.push(d);
+                        relationship[e.property] = { "@id": d["@id"] };
+                    }
+                }
                 rows.push(relationship);
             }
             offset += pageSize;
