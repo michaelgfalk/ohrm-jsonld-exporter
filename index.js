@@ -12,6 +12,8 @@ import {
     EntityDobjectRelationship,
     EntityFunctionRelationship,
     Entity,
+    EntityEvent,
+    EntityName,
     Function,
     PubResource,
     RelatedEntity,
@@ -71,6 +73,8 @@ async function main() {
         { obj: EntityDobjectRelationship, name: "entityDobjectRelationships" },
         { obj: EntityFunctionRelationship, name: "entityFunctionRelationships" },
         { obj: Entity, name: "entities" },
+        { obj: EntityEvent, name: "entityEvent" },
+        { obj: EntityName, name: "entityName" },
         { obj: Function, name: "entityFunction" },
         { obj: PubResource, name: "publishedResources" },
         { obj: RelatedEntity, name: "entityRelationships" },
@@ -115,7 +119,6 @@ async function main() {
     //   back to the related entities
     var i = 0;
     // PT: Added more informative names
-    let relationshipsToRemove = [];
     for (let entity of crate.entities()) {
         if (entity["@type"].includes("Relationship")) {
             var relationshipName = "";
@@ -128,7 +131,9 @@ async function main() {
                 relationshipName += `${srcEntity.name} -> `;
             } catch (error) {
                 // console.log(`Can't find source: ${entity.source[0]["@id"]}`);
-                relationshipsToRemove.push(entity);
+                crate.deleteEntity(entity);
+                continue;
+                // relationshipsToRemove.push(entity);
             }
             relationshipName += `${entity["@type"]} -> `;
             try {
@@ -137,13 +142,11 @@ async function main() {
                 relationshipName += `${tgtEntity.name}`;
             } catch (error) {
                 // console.log(`Can't find target: ${entity.target[0]["@id"]}`);
-                relationshipsToRemove.push(entity);
+                crate.deleteEntity(entity);
+                continue;
             }
             entity.name = relationshipName;
         }
-    }
-    for (let entity of relationshipsToRemove) {
-        crate.deleteEntity(entity["@id"]);
     }
     if (argv.outputPath) {
         await ensureDir(argv.outputPath);

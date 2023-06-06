@@ -5,6 +5,8 @@ export { EntityArchivalRelationship } from "./earrship.js";
 export { EntityDobjectRelationship } from "./edorship.js";
 export { EntityFunctionRelationship } from "./efrship.js";
 export { Entity } from "./entity.js";
+export { EntityEvent } from "./entityevent.js";
+export { EntityName } from "./entityname.js";
 export { Function } from "./function.js";
 export { PubResource } from "./pubresource.js";
 export { RelatedEntity } from "./relatedentity.js";

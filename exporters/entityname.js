@@ -1,7 +1,7 @@
 import { pageSize, mapEntityProperties } from "./config.js";
 import { extractEntity } from "./common.js";
 
-export class Entity {
+export class EntityName {
     constructor() {}
 
     async export({ models }) {
@@ -23,7 +23,7 @@ export class Entity {
 
                 const entity = {
                     "@id": `#${encodeURIComponent(row.eid)}_alsoKnownAs`,
-                    "@type": [type, row.enalternatetype],
+                    "@type": [row.enalternatetype],
                     name: row.enalternate,
                     alsoKnownAs: { "@id": `#${encodeURIComponent(row.eid)}` },
                 };

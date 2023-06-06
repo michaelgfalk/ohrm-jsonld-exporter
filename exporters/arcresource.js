@@ -1,4 +1,5 @@
 import { pageSize, mapEntityProperties } from "./config.js";
+import { extractEntity } from "./common.js";
 
 export class ArcResource {
     constructor() {}

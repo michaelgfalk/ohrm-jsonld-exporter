@@ -66,7 +66,6 @@ export class PubResource {
                             value: e.value,
                         });
                         rows.push(d);
-                        console.log(d, pubresource);
                         pubresource[e.property] = { "@id": d["@id"] };
                     }
                 }

@@ -1,7 +1,7 @@
 import { pageSize, mapEntityProperties } from "./config.js";
 import { extractEntity } from "./common.js";
 
-export class Entity {
+export class EntityEvent {
     constructor() {}
 
     async export({ models }) {
@@ -25,9 +25,14 @@ export class Entity {
                     ["eelastmodd", "recordLastModified"],
                     "otdid",
                 ];
+
+                let entityDefinition = await models.entity.findOne({ where: { eid: row.eid } });
+                let type = entityDefinition.etype.split("-").map((v) => v.trim().replace(" ", "_"));
+                // console.log(row.eid, entityDefinition.etype);
+
                 let event = {
                     "@id": `#${encodeURIComponent(row.eid)}_event`,
-                    "@type": [type, row.eetype],
+                    "@type": [...type, row.eetype],
                     description: row.eedescription,
                     entity: { "@id": `#${encodeURIComponent(row.eid)}` },
                 };
@@ -49,7 +54,7 @@ export class Entity {
                 }
 
                 // push the entity definition into the graph
-                rows.push(entity);
+                rows.push(event);
             }
             offset += pageSize;
         }
