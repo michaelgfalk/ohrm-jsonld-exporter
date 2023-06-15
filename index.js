@@ -86,7 +86,6 @@ async function main() {
         Place: [],
         State: [],
         Country: [],
-        Location: [],
         Nationality: [],
         Contact: [],
     };

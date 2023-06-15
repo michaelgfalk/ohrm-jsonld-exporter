@@ -39,7 +39,7 @@ export class EntityEvent {
                 mapEntityProperties(row, event, properties);
 
                 let extractEntities = [
-                    { type: "Location", value: row.eelocation, property: "location" },
+                    { type: "Place", value: row.eelocation, property: "location" },
                     { type: "Person", value: row.eeprepared, property: "preparedBy" },
                 ];
                 for (let e of extractEntities) {
