@@ -27,8 +27,11 @@ export class EntityEvent {
                 ];
 
                 let entityDefinition = await models.entity.findOne({ where: { eid: row.eid } });
-                let type = entityDefinition.etype.split("-").map((v) => v.trim().replace(" ", "_"));
+                let type = entityDefinition?.etype
+                    .split("-")
+                    .map((v) => v.trim().replace(" ", "_"));
                 // console.log(row.eid, entityDefinition.etype);
+                type = type ?? [];
 
                 let event = {
                     "@id": `#${encodeURIComponent(row.eid)}_event`,

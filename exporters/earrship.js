@@ -29,7 +29,7 @@ export class EntityArchivalRelationship {
                 if (!row.eid) continue;
                 const relationship = {
                     "@id": `#${encodeURIComponent(row.arcid)}-${encodeURIComponent(row.eid)}`,
-                    "@type": ["Relationship", row.relationship.replace(/\s/g, "_")],
+                    "@type": ["Relationship", row.relationship?.replace(/\s/g, "_")],
                     identifier: `${row.arcid}-${row.eid}`,
                     description: row.description,
                     source: { "@id": `#${encodeURIComponent(row.arcid)}` },
