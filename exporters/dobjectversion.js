@@ -34,11 +34,29 @@ export class DObjectVersion {
                     ["dovportrait", "imageOrientation"],
                 ];
 
+                // If it's a multipage image, then you just want to point to the directory with the images
+                // The raw string from the OHRM points to a defunct 'multi_page_viewer' url, e.g.
+                // objects/images/image_viewer_paged.htm?BLI2,3,1,S => objects/images/BLI
+                let dov_id = row.dov;
+                let parent_type = "File";
+                const viewer_path_re = /image_viewer_paged\.htm\?/
+                if (row.dovtype == "multipage image") {
+                    if (viewer_path_re.test(dov_id)) {
+                        let stub, codes, subdir, rest;
+                        [stub, codes] = dov_id.split(viewer_path_re);
+                        [subdir, ...rest] = codes.split(",");
+                        dov_id = stub + subdir;
+                        parent_type = "Dataset";
+                    } else {
+                        break
+                    }
+                }
+
                 const dobject = {
-                    "@id": encodeURI(row.dov),
-                    "@type": ["File", "DigitalObject", row.dovtype],
+                    "@id": encodeURI(dov_id),
+                    "@type": [parent_type, "DigitalObjectVersion", row.dovtype],
                     dobjectIdentifier: row.doid,
-                    name: row.dovtitle ?? row.dov,
+                    name: row.dovtitle ?? dov_id,
                     description: row.dovdescription,
                     dobject: { "@id": `#${encodeURIComponent(row.doid)}` },
                 };

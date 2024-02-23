@@ -14,7 +14,7 @@
         "lodash": "^4.17.21",
         "pg": "^8.8.0",
         "pg-hstore": "^2.3.4",
-        "ro-crate": "^3.2.0",
+        "ro-crate": "^3.3.5",
         "sequelize": "^6.26.0",
         "sequelize-auto": "^0.8.8",
         "yargs": "^17.6.2"
