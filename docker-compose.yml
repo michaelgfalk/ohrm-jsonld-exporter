@@ -5,8 +5,6 @@ volumes:
         driver: local
     exporter_node_modules:
         driver: local
-    python:
-        driver: local
 
 services:
     db:
