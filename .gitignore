@@ -27,3 +27,6 @@ pnpm-debug.log*
 *.sw?
 
 .parcel-cache
+
+# Python files
+__pycache__
