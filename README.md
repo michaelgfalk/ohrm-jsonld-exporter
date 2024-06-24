@@ -76,3 +76,22 @@ In this example the data in the `estartdate` column will be written out to a fie
 
 -   The exporters are then wired up into the file `./index.js` which first runs all of the exporters
     and then goes through linking the relationship entities to the respective targets.
+
+## Automation using Python
+
+The repo contains a python script for automatically processing all the OHRMs in a directory, and uploading them to figshare.
+
+The script is designed to work with conda. Create a conda environment using the `conda-env.yml` like so:
+
+```{bash}
+conda env create --name ohrm-exporter --file=conda-env.yml
+conda activate ohrm-exporter
+```
+
+Once you have configured the environment, you can run the script. It requires three pieces of information, the figshare api endpoint, the directory where the OHRMs are stored, and [your figshare API token](https://help.figshare.com/article/how-to-get-a-personal-token). You can either provide these in the command line, or create a file called `.python-config.yml` and store the information there using the following template:
+
+```{yaml}
+figshare_token: your api token
+figshare_endpoint: https://api.figshare.com/v2
+ohrm_directory: path/to/ohrms/
+```

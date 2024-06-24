@@ -4,10 +4,12 @@ node_modules
 dist
 data
 pgdata
+upload
 
 # local env files
 .env.local
 .env.*.local
+.figshare-token
 
 # Log files
 npm-debug.log*

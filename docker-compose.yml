@@ -26,7 +26,7 @@ services:
             - ./data:/srv/data
             - ./pgdata:/postgresql
         ports:
-           - 5432:5432
+            - 5432:5432
     exporter:
         image: node:18-bullseye
         hostname: exporter

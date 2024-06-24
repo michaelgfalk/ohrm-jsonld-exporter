@@ -25,14 +25,20 @@ const { isArray, union, clone, uniqBy } = lodashPkg;
 import { ROCrate } from "ro-crate";
 import * as configuration from "./configuration.js";
 import yargs from "yargs/yargs";
+import html from "./models/html.js";
 
 const argv = yargs(process.argv.slice(2))
     .scriptName("ohrm-jsonld-converter")
-    .usage("Usage: $0 -o output path")
+    .usage("Usage: $0 -o output path -d database")
     .option("o", {
         alias: "output-path",
         describe: "A path to output the JSON-LD files",
-        type: "string",
+        type: "string"
+    })
+    .option("d", {
+        alias: "database",
+        describe: "The name of the Postgres database with the OHRM data",
+        type: "string"
     })
 
     .help().argv;
@@ -40,9 +46,9 @@ const argv = yargs(process.argv.slice(2))
 main();
 async function main() {
     let sequelize = new Sequelize(
-        configuration.databaseConfig.database,
+        argv.database,
         configuration.databaseConfig.username,
-        configuration.databaseConfig.database,
+        configuration.databaseConfig.password,
         {
             host: configuration.databaseConfig.host,
             dialect: "postgres",
@@ -52,11 +58,12 @@ async function main() {
     try {
         await sequelize.authenticate();
     } catch (error) {
-        console.error(`Unable to connect to the database!`);
+        console.error(`Unable to connect to the database:`, error);
     }
     let models = initModels(sequelize);
 
     if (argv.outputPath) await ensureDir(argv.outputPath);
+
 
     const crate = new ROCrate({ array: true, link: true });
     // the name property is where those entities will be attached to the root dataset
@@ -89,6 +96,16 @@ async function main() {
         Nationality: [],
         Contact: [],
     };
+    // set basic metadata of the root entity
+    // this info is in the 'html' table of the database, if it is there at all...
+    const rootDataset = crate.rootDataset;
+    const rootMetaData = await models.html.findOne({
+        attributes: ['title', 'creator','description']
+    });
+    rootDataset.title = rootMetaData.title ? rootMetaData.title : "OHRM Dataset";
+    rootDataset.description = rootMetaData.description;
+    rootDataset.creator = rootMetaData.creator;
+
     // run all the exporters
     let extractEntitiesOfType = Object.keys(typeMaps);
     for (let { obj, name } of resources) {
