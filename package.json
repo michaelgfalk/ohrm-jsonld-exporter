@@ -15,6 +15,7 @@
         "pg": "^8.8.0",
         "pg-hstore": "^2.3.4",
         "ro-crate": "^3.3.5",
+        "ro-crate-html": "^0.1.4",
         "sequelize": "^6.26.0",
         "sequelize-auto": "^0.8.8",
         "yargs": "^17.6.2"

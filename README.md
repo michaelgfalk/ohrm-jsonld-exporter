@@ -88,7 +88,7 @@ conda env create --name ohrm-exporter --file=conda-env.yml
 conda activate ohrm-exporter
 ```
 
-Once you have configured the environment, you can run the script. It requires three pieces of information, the figshare api endpoint, the directory where the OHRMs are stored, and [your figshare API token](https://help.figshare.com/article/how-to-get-a-personal-token). You can either provide these in the command line, or create a file called `.python-config.yml` and store the information there using the following template:
+Once you have configured the environment, you can run the script using `python convert-and-upload.py`. It requires three pieces of information, the figshare api endpoint, the directory where the OHRMs are stored, and [your figshare API token](https://help.figshare.com/article/how-to-get-a-personal-token). You can either provide these in the command line, or create a file called `.python-config.yml` and store the information there using the following template:
 
 ```{yaml}
 figshare_token: your api token

@@ -185,7 +185,12 @@ def unset_db_environment_variable(node_container: container) -> int:
 def create_crate_metadata(ohrm: OHRM, node_container: container, db_container: container) -> int:
     """Create ro-crate-metadata.json and save it in the data dir"""
     crate_dir = os.path.join(".", LOCAL_DATADIR, ohrm.name)
+    # Create ro-crate-metadata.json
     node_command = f"node . -o {crate_dir} -d {ohrm.name.lower()}"
+    print(f"Running node command: {node_command}")
+    node_container.exec_run(node_command, workdir=DOCKER_HOMEDIR)
+    # Create ro-crate-preview.html
+    node_command = f"npx rochtml {crate_dir}/ro-crate-metadata.json"
     print(f"Running node command: {node_command}")
     node_container.exec_run(node_command, workdir=DOCKER_HOMEDIR)
     return 1
@@ -198,7 +203,6 @@ def assemble_upload(ohrm: OHRM) -> tuple[dict, str]:
     upload_dir = os.path.join(UPLOAD_DIR, ohrm.name)
     os.makedirs(upload_dir)
     crate_files = os.path.join(crate_dir, "*")
-
     # Move RO-crate json into upload dir
     os.system(f"mv {crate_files} {os.path.join(upload_dir, "")}")
     os.system(f"rmdir {crate_dir}")
@@ -211,7 +215,7 @@ def assemble_upload(ohrm: OHRM) -> tuple[dict, str]:
         os.path.splitext(PAYLOAD_NAME)[1][1:],
         UPLOAD_DIR
         )
-
+    breakpoint()
     return metadata, payload
 
 def _get_crate_metadata(upload_dir: str):
@@ -223,8 +227,13 @@ def _get_crate_metadata(upload_dir: str):
     metadata = {}
     metadata["title"] = root.get("title")
     metadata["resource_title"] = root.get("title")
-    metadata["authors"] = [root.get("creator", "")]
     metadata["description"] = root.get("description", "")
+    # Add authors if available – delete if they are not, or it ruins the upload
+    metadata["authors"] = [root.get("creator", "")]
+    metadata["authors"] = [val for val in metadata["authors"] if val]
+    if not metadata["authors"]:
+        del metadata["authors"]
+
     return metadata
 
 def clean_upload_data(ohrm: OHRM) -> int:
