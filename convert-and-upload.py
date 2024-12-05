@@ -227,7 +227,7 @@ def _get_crate_metadata(upload_dir: str):
     metadata = {}
     metadata["title"] = root.get("title")
     metadata["resource_title"] = root.get("title")
-    metadata["description"] = root.get("description", "")
+    metadata["description"] = root.get("description", "This is an RO-Crate of a database from the Online Heritage Resource Manager. Unfortunately it is not described, but you can explore the data using the included ro-crate-preview.html file.")
     # Add authors if available – delete if they are not, or it ruins the upload
     metadata["authors"] = [root.get("creator", "")]
     metadata["authors"] = [val for val in metadata["authors"] if val]
