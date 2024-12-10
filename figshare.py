@@ -42,7 +42,7 @@ def _raw_issue_request(method, url, data=None, binary=False):
         except ValueError:
             data = response.content
     except requests.exceptions.HTTPError as error:
-        print('Caught an HTTPError: {}'.format(error.message))
+        print('Caught an HTTPError: {}'.format(error.code))
         print('Body:\n', response.content)
         raise
 

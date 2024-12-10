@@ -19,17 +19,17 @@ class OHRM():
     def __init__(self, name: str, path: str):
         self.name = name
         self.path = path
-        self.data_path = self._get_data_path()
 
-    def _get_data_path(self) -> str:
+    @property
+    def data_path(self) -> str:
         with os.scandir(self.path) as ohrm_directory:
             try:
-                (data_path,) = [entry.path
+                (_data_path,) = [entry.path
                                 for entry in ohrm_directory
                                 if entry.is_dir and (entry.name.lower() == "ohrm")]
             except ValueError:
-                raise ValueError(f"{ohrm_directory} contains more than one directory")
-        return os.path.join(data_path, "")
+                raise ValueError(f"OHRM subdirectory could not be found for {self.name}")
+        return os.path.join(_data_path, "")
     
 DB_CONTAINER = "ohrm-jsonld-exporter-db-1"
 NODE_CONTAINER = "ohrm-jsonld-exporter-exporter-1"
@@ -39,6 +39,7 @@ DOCKER_HOMEDIR = os.path.join("/", "srv", "exporter", "")
 DOCKER_DATADIR = os.path.join("/", "srv", "data", "")
 LOCAL_DATADIR = os.path.join("data", "")
 PAYLOAD_NAME = "ohrm-data.zip"
+ERROR_LOG = ".upload-error.log"
 
 with open(".python-config.yml", "rt") as config_file:
     PYTHON_CONFIG = yaml.safe_load(config_file)
@@ -65,7 +66,11 @@ def run() -> int:
         ohrm_dir = link_ohrm_dir(args.ohrm_directory, OHRM_LINKNAME)
         ohrms = list_ohrms(ohrm_dir)
         for ohrm in ohrms:
-            export_ohrm(ohrm, db_container, node_container, UPLOAD_DIR)
+            try:
+                export_ohrm(ohrm, db_container, node_container, UPLOAD_DIR)
+            except Exception as exception:
+                with open(ERROR_LOG, "at") as error_log:
+                    error_log.write(f"Skipped: {ohrm.name}; {exception}\n")
     finally:
         unlink_ohrm_dir(ohrm_dir)
         client.close()
@@ -165,7 +170,7 @@ def _copy_sql_to_data_dir(sql_path: str) -> int:
     return 1
 
 def _rm_sql_copy() -> int:
-    os.system(f"rm -r {os.path.join(LOCAL_DATADIR, "sql")}")
+    os.system(f"rm -r {os.path.join(LOCAL_DATADIR, 'sql')}")
 
 # RUN NODE EXPORTER APP
 
@@ -215,7 +220,6 @@ def assemble_upload(ohrm: OHRM) -> tuple[dict, str]:
         os.path.splitext(PAYLOAD_NAME)[1][1:],
         UPLOAD_DIR
         )
-    breakpoint()
     return metadata, payload
 
 def _get_crate_metadata(upload_dir: str):
@@ -230,7 +234,7 @@ def _get_crate_metadata(upload_dir: str):
     metadata["description"] = root.get("description", "This is an RO-Crate of a database from the Online Heritage Resource Manager. Unfortunately it is not described, but you can explore the data using the included ro-crate-preview.html file.")
     # Add authors if available – delete if they are not, or it ruins the upload
     metadata["authors"] = [root.get("creator", "")]
-    metadata["authors"] = [val for val in metadata["authors"] if val]
+    metadata["authors"] = [{"name":val} for val in metadata["authors"] if val]
     if not metadata["authors"]:
         del metadata["authors"]
 

@@ -11,6 +11,7 @@ upload
 .env.*.local
 .figshare-token
 .python-config.yml
+.upload-error.log
 
 # Log files
 npm-debug.log*
