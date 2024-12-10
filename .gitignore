@@ -12,6 +12,7 @@ upload
 .figshare-token
 .python-config.yml
 .upload-error.log
+.notes.md
 
 # Log files
 npm-debug.log*
